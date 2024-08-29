@@ -1,6 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-
+import { useEffect, useRef, useState } from 'react';
+import menuIcon from 'public/menu.png'
 
 export default function HamburgerMenu() {
     const [isOpen, setIsOpen] = useState(false);
@@ -9,32 +10,46 @@ export default function HamburgerMenu() {
         setIsOpen(!isOpen);
     };
 
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+          if (event.target && event.target instanceof Element && !event.target.closest('.nav')) {
+            setIsOpen(false);
+          }
+        };
+    
+        document.addEventListener('click', handleOutsideClick);
+    
+        return () => {
+          document.removeEventListener('click', handleOutsideClick);
+        };
+      }, [isOpen]);
+
     return (
         <>
             <button
                 className="fixed top-4 left-4 z-50 text-white focus:outline-none"
                 onClick={toggleMenu}
             >
-                {isOpen ? "Close" : "Open"}  {/* Cambiar por iconos*/}
+                <span><Image src={menuIcon} alt="Menu logo" height={25}/></span> {/* Cambiar por iconos*/}
             </button>
             <div
-                className={`fixed inset-y-0 left-0 z-50 bg-gray-900 w-64 overflow-y-auto transform transition duration-300 ease-in-out 
+                className={`fixed inset-y-0 left-0 z-50 bg-gray-100 w-64 overflow-y-auto transform transition duration-300 ease-in-out 
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
-                <div className="flex items-center justify-between px-4 py-3">
-                    <span className="text-lg font-bold text-white">Menu</span>
-                    <button className="text-white focus:outline-none" onClick={toggleMenu}>
+                <div className="flex justify-center px-4 py-3">
+                    <Image src="/Logo ADI.png" alt="LOGO ADI" width={100} height={100} /> {/* Cambiar por logo con letras azules */}
+                    {/* <button className="text-white place-self-end focus:outline-none" onClick={toggleMenu}>
                         Close
-                    </button>
+                    </button> */}
                 </div>
                 <nav className="mt-4">
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Inicio</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Opiniones</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Ya! Danza</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Capacitaciones</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Información</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Contacto</Link>
-                    <Link href="#" className="block py-2 px-4 text-sm text-white hover:bg-gray-800">Privacidad</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Inicio</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Opiniones</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Ya! Danza</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Capacitaciones</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Información</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Contacto</Link>
+                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Privacidad</Link>
                 </nav>
             </div>
         </>
