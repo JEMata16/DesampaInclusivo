@@ -2,15 +2,14 @@
 import { SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import AuthOptionsButtons from "./_components/AuthOptions";
-import TopNav from "./_components/TopNav";
 
 
 
-export default async function HomePage() {
+export default function HomePage() {
   
   return (
     <>
-      <TopNav/>
+      {/* <TopNav/> */}
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-300">
         <SignedIn>
           <Link href="/test">Dashboard</Link>
