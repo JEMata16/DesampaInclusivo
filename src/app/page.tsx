@@ -1,8 +1,8 @@
 'use client';
-import { SignInButton, SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
 import AuthOptionsButtons from "./_components/AuthOptions";
-import HamburgerMenu from "./_components/HamburgerMenu";
+import TopNav from "./_components/TopNav";
 
 
 
@@ -10,8 +10,8 @@ export default async function HomePage() {
   
   return (
     <>
-    <HamburgerMenu/>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <TopNav/>
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-300">
         <SignedIn>
           <Link href="/test">Dashboard</Link>
           <SignOutButton/>
