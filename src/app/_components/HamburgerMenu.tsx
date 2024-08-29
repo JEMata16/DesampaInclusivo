@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import menuIcon from 'public/menu.png'
 
 export default function HamburgerMenu() {
@@ -26,11 +26,14 @@ export default function HamburgerMenu() {
 
     return (
         <>
+            {isOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+            )}
             <button
-                className="fixed top-4 left-4 z-50 text-white focus:outline-none"
+                className="top-4 left-4 z-50 text-white focus:outline-none"
                 onClick={toggleMenu}
             >
-                <span><Image src={menuIcon} alt="Menu logo" height={25}/></span> {/* Cambiar por iconos*/}
+                <span><Image src={menuIcon} alt="Menu logo" height={25}/></span>
             </button>
             <div
                 className={`fixed inset-y-0 left-0 z-50 bg-gray-100 w-64 overflow-y-auto transform transition duration-300 ease-in-out 
@@ -38,9 +41,6 @@ export default function HamburgerMenu() {
             >
                 <div className="flex justify-center px-4 py-3">
                     <Image src="/Logo ADI.png" alt="LOGO ADI" width={100} height={100} /> {/* Cambiar por logo con letras azules */}
-                    {/* <button className="text-white place-self-end focus:outline-none" onClick={toggleMenu}>
-                        Close
-                    </button> */}
                 </div>
                 <nav className="mt-4">
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Inicio</Link>
