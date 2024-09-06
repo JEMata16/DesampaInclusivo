@@ -23,7 +23,7 @@ function Header() {
     <header className="flex flex-row justify-between items-center">
       <HamburgerMenu />
       <Image src="/Logo ADI.png" alt="LOGO ADI" width={100} height={50} /> 
-      <UserButton/>
+      <UserButton  appearance={{layout: {}}}/>
     </header>
   )
 }
