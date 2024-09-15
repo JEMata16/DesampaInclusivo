@@ -8,12 +8,12 @@ export const env = createEnv({
    */
   server: {
     POSTGRES_URL: z.string().url(),
-    S3_ENDPOINT: z.string().url(),
+    S3_ENDPOINT: z.string(),
     S3_ACCESS_KEY: z.string(),
     S3_SECRET_KEY: z.string(),
     S3_BUCKET_NAME: z.string(),
-    S3_USE_SSL: z.string(),
-    S3_PORT: z.string(),
+    S3_USE_SSL: z.string().optional(),
+    S3_PORT: z.string().optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
