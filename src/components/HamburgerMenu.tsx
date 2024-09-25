@@ -45,9 +45,10 @@ export default function HamburgerMenu() {
                     <Image src="/Logo ADI.png" alt="LOGO ADI" width={100} height={100} /> {/* Cambiar por logo con letras azules */}
                 </div>
                 <nav className="mt-4">
-                    <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Inicio</Link>
+                    <Link href="/" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Inicio</Link>
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Opiniones</Link>
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Ya! Danza</Link>
+                    <Link href="/publicaciones" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Publicaciones</Link>
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Capacitaciones</Link>
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Información</Link>
                     <Link href="#" className="block py-2 px-4 text-base hover:bg-[#205c9c] hover:text-white">Contacto</Link>

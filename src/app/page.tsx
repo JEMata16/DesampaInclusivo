@@ -1,7 +1,7 @@
 'use client';
 import { SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
-import AuthOptionsButtons from "./_components/AuthOptions";
+import AuthOptionsButtons from "../components/AuthOptions";
 
 
 
