@@ -1,13 +1,13 @@
 "use client";
+
 import { useState } from "react";
-import { Button } from "~/components/ui/button";
 
 export default function PublicacionesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isChosen, setIsChosen] = useState(false);
+  const [isChosen, setIsChosen] = useState(true);
 
   return (
     <>
@@ -26,13 +26,7 @@ export default function PublicacionesLayout({
         </button>
       </nav>
 
-      <div className="bg-gray-200">
-        <div className="ml-3 py-3">
-          <Button variant="upload">+ Publicar</Button>
-        </div>
-
-        {children}
-      </div>
+      <div className="min-h-screen bg-gray-200">{children}</div>
     </>
   );
 }
