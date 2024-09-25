@@ -1,14 +1,8 @@
+
 import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
-import {
-  ClerkProvider,
-  SignedIn,
-  UserButton,
-} from '@clerk/nextjs'
-
-import HamburgerMenu from "./_components/HamburgerMenu";
-import Image from "next/image";
-import AuthOptionsButtons from "./_components/AuthOptions";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import Header from "../components/Header";
 
 export const metadata = {
   title: "Desampa inclusivo",
@@ -17,16 +11,6 @@ export const metadata = {
 };
 
 
-function Header() {
-
-  return (
-    <header className="flex flex-row justify-between items-center">
-      <HamburgerMenu />
-      <Image src="/Logo ADI.png" alt="LOGO ADI" width={100} height={50} /> 
-      <UserButton  appearance={{layout: {}}}/>
-    </header>
-  )
-}
 
 export default function RootLayout({
   children,
@@ -34,7 +18,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
