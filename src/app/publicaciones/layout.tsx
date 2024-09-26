@@ -1,25 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
+
+interface MyContextType {
+  value: boolean;
+  setValue: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const MyContext = createContext<MyContextType | undefined>(undefined);
+
+export const MyProvider = ({ children }: { children: React.ReactNode }) => {
+  const [value, setValue] = useState<boolean>(true);
+
+  return (
+    <MyContext.Provider value={{ value, setValue }}>
+      {children}
+    </MyContext.Provider>
+  );
+};
+
+// Custom hook for easy access to the context
+export const useMyContext = (): MyContextType => {
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error("useMyContext must be used within a MyProvider");
+  }
+  return context;
+};
 
 export default function PublicacionesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isChosen, setIsChosen] = useState(true);
+  const { value: isChosen, setValue } = useMyContext();
 
   return (
     <>
       <nav className="grid grid-cols-2 ">
         <button
-          onClick={() => setIsChosen(true)}
+          onClick={() => setValue(true)}
           className={`flex items-center justify-center rounded-t-lg py-2  ${isChosen ? "bg-gray-200" : "hover:bg-gray-200"} `}
         >
           Mis Publicaciones
         </button>
         <button
-          onClick={() => setIsChosen(false)}
+          onClick={() => setValue(false)}
           className={`flex items-center justify-center rounded-t-lg py-2  ${!isChosen ? "bg-gray-200" : "hover:bg-gray-200"} `}
         >
           Usuarios

@@ -1,7 +1,14 @@
+'use client';
+
 import Link from "next/link";
+import { useContext } from "react";
 import { Button } from "~/components/ui/button";
+import { useMyContext } from "./layout";
+
+
 
 export default function publicaciones() {
+  const {value} = useMyContext();
   return (
     <main className="flex min-h-screen flex-col bg-gray-200">
       <div className="ml-3 py-3">
@@ -9,7 +16,10 @@ export default function publicaciones() {
           <Link href="/publicaciones/agregar">+ Publicar</Link>
         </Button>
       </div>
-      Publicaciones
+      <p>{value ? "true" : "false"}</p>
     </main>
   );
 }
+
+
+
