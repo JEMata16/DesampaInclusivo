@@ -25,16 +25,19 @@ export const createTable = pgTableCreator((name) => `desampainclusivo_${name}`);
 export const posts = createTable(
   "posts",
   {
-    id: serial("id").primaryKey(),
+    id: serial("id").primaryKey().notNull(),
     description: varchar("description", {length: 255}),
-    name: varchar("name", { length: 256 }),
+    provincia: varchar("provincia", { length: 50 }),
+    canton: varchar("canton", { length: 50 }),
+    rating: integer("rating"),
+    authorId: varchar("author_id"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }),
   },
   (example) => ({
-    nameIndex: index("name_idx").on(example.name),
+    provinceIndex: index("provincia_idx").on(example.provincia),
   })
 );
 
@@ -83,15 +86,8 @@ export const repliesRelations = relations(replies, ({one}) => ({
   }),
 }))
 
-// https://programando.paginasweb.cr/2016/04/29/lista-de-provincias-cantones-y-distritos-de-costa-rica-en-formato-json/ VALUE USING THIS
-export const provincesEnum = pgEnum('name', ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón']);
-export const provinces = createTable(
-  "provinces",
-  {
-    id: serial("id").primaryKey(),
-    name: provincesEnum('provinces').default('San José').notNull(),
-  }
-);
+
+
 
 // FILES OF POSTS AND VIDEOS
 export const files = createTable('files', {
