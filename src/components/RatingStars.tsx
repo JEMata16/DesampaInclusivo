@@ -5,7 +5,6 @@ interface RatingStarsProps {
   rating: number;
   maxRating?: number;
   onChange: (rating: number) => void;
-  size: number;
 }
 const FullStar = () => {
   return (
@@ -34,7 +33,6 @@ const RatingStars: React.FC<RatingStarsProps> = ({
   rating,
   maxRating = 5,
   onChange,
-  size,
 }) => {
   const stars = Array.from({ length: maxRating }, (_, i) => (
     <span className="cursor-pointer w-9 h-6" key={i} onClick={() =>onChange(i + 1)}>

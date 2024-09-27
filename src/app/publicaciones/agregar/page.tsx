@@ -110,7 +110,7 @@ export default function UploadFile() {
             <Label>
               Calificación según el nivel de accesibilidad
             </Label>
-           <RatingStars rating={rating} onChange={handleRatingChange} size={9}/>
+           <RatingStars rating={rating} onChange={handleRatingChange}/>
           </div>
           
           

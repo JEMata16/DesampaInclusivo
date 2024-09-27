@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import Link from "next/link";
-import { useContext } from "react";
+import { Suspense, useContext } from "react";
 import { Button } from "~/components/ui/button";
 import { useMyContext } from "./layout";
-
-
+import PostCards from "~/components/PostCards";
 
 export default function publicaciones() {
-  const {value} = useMyContext();
+  const { value } = useMyContext();
+  
   return (
     <main className="flex min-h-screen flex-col bg-gray-200">
       <div className="ml-3 py-3">
@@ -16,10 +16,14 @@ export default function publicaciones() {
           <Link href="/publicaciones/agregar">+ Publicar</Link>
         </Button>
       </div>
-      <p>{value ? "true" : "false"}</p>
+      {value ? (
+        <div className="mx-auto grid w-full max-w-5xl gap-4 p-3 md:grid-cols-2 ">
+          
+            <PostCards />
+        </div>
+      ) : (
+        "false"
+      )}
     </main>
   );
 }
-
-
-
