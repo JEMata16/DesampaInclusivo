@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useContext } from "react";
+import { Suspense, useContext, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { useMyContext } from "./layout";
 import PostCards from "~/components/PostCards";
+import { useAuth } from "@clerk/nextjs";
 
 export default function publicaciones() {
   const { value } = useMyContext();
@@ -18,8 +19,7 @@ export default function publicaciones() {
       </div>
       {value ? (
         <div className="mx-auto grid w-full max-w-5xl gap-4 p-3 md:grid-cols-2 ">
-          
-            <PostCards />
+          <PostCards />
         </div>
       ) : (
         "false"
