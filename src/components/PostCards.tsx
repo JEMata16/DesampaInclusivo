@@ -1,25 +1,30 @@
-
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useAuth } from "@clerk/nextjs";
+import VerticalIcon from "./VerticalIcon";
+import { MapPinIcon } from "lucide-react";
 
 type Data = {
   posts: Posts[];
   image: string | null;
-}
+};
 type Posts = {
   id: string;
   description: string;
   provincia: string;
   canton: string;
   rating: number;
-  image: string;
   authorId: string;
+  images: [
+    {
+      fileName: string;
+      signedUrl: string;
+    },
+  ];
 };
 export default function PostCards() {
   const [posts, setPosts] = useState<Data | null>(null);
-  const [image, setImage] = useState<string | null>(null);
   const { userId } = useAuth();
 
   useEffect(() => {
@@ -33,15 +38,16 @@ export default function PostCards() {
 
     fetchData();
   }, [userId]);
-  
+
   if (!posts) return <div>Loading...</div>;
   return (
     <section>
       {posts.posts.map((post, index) => (
         <Card key={index}>
           <CardHeader>
-            {/* {image && <img src={image} alt="User Image" />} */}
-            <CardTitle>{post.provincia}</CardTitle>
+            {post.images && (
+              <img src={post.images[0].signedUrl} alt="User Image" />
+            )}
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2  ">
@@ -52,10 +58,15 @@ export default function PostCards() {
                 </div>
               </div>
               <div className="justify-self-end">
-                <span>ICON</span>
+                <VerticalIcon />
               </div>
             </div>
-            <div>LOCATION</div>
+            <div className="flex flex-row">
+              <MapPinIcon size={16} strokeWidth={1.75} className="text-sky-700"/>
+              <p className="text-sm text-sky-700 ">
+                <span>{post.provincia}</span>
+              </p>
+            </div>
             <div className="line-clamp-4">{post.description}</div>
           </CardContent>
         </Card>
