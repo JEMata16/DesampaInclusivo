@@ -2,7 +2,8 @@ import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import Header from "../components/Header";
-import { MyProvider } from "./publicaciones/layout";
+import MyProvider from "~/utils/posts/layoutContext";
+
 
 export const metadata = {
   title: "Desampa inclusivo",
@@ -17,14 +18,15 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <MyProvider>
+      
         <html lang="en" className={`${GeistSans.variable}`}>
           <body>
             <Header />
+            <MyProvider>
             {children}
+            </MyProvider>
           </body>
         </html>
-      </MyProvider>
     </ClerkProvider>
   );
 }

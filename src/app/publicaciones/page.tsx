@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { Suspense, useContext, useEffect } from "react";
 import { Button } from "~/components/ui/button";
-import { useMyContext } from "./layout";
+
 import PostCards from "~/components/PostCards";
 import { useAuth } from "@clerk/nextjs";
+import { useMyContext } from "~/utils/posts/layoutContext";
 
 export default function publicaciones() {
   const { value } = useMyContext();
