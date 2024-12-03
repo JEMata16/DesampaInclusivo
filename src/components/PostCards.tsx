@@ -58,7 +58,7 @@ export default function PostCards() {
                 </div>
               </div>
               <div className="justify-self-end">
-                <VerticalIcon />
+                <VerticalIcon postId={post.id}/>
               </div>
             </div>
             <div className="flex flex-row">
