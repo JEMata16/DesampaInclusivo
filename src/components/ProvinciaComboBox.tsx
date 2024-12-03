@@ -68,7 +68,13 @@ const provincias: Status[] = [
   },
 ]
 
-export function ProvinciaComboBox({ onProvinciaSelect }: { onProvinciaSelect: (data:{id: number | undefined, name: string | undefined}) => void }) {
+type Province = {
+  id: number | undefined
+  name: string | undefined
+}
+
+export function ProvinciaComboBox({ onProvinciaSelect }: { onProvinciaSelect: (data:{id: number | undefined, name: string | undefined}) => void;
+selectedProvincia: Province | null }) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = window.matchMedia("(min-width: 768px)").matches
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(null)
@@ -143,8 +149,13 @@ function StatusList({
   )
 }
 
+type Canton = {
+  name: string | undefined
+}
+
 // CANTON COMBOBOX
-export function CantonComboBox({ provinceId, onCantonSelect }: { provinceId: number | undefined, onCantonSelect: (data: {name: string | undefined}) => void }) {
+export function CantonComboBox({ provinceId, onCantonSelect }: { provinceId: number | undefined, onCantonSelect: (data: {name: string | undefined}) => void;
+selectedCanton: Canton | null }) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = window.matchMedia("(min-width: 768px)").matches
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(null)
