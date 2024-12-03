@@ -45,12 +45,20 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
     if (mode === "edit" && postId) {
       // Fetch the existing post data to prefill the form
       const fetchPostData = async () => {
-        const response = await fetch(`/api/posts/${postId}`);
+        const response = await fetch(
+          `/api/posts/${postId}`,
+          {
+            headers: { userId: userId ?? "" },
+            method: "GET"
+          },
+        );
         const data = await response.json();
-        setDescription(data.description);
-        setProvincia(data.provincia);
-        setCanton(data.canton);
-        setRating(data.rating);
+        console.log(data.posts[0]);
+        const post = data.posts[0];
+        setDescription(post.description);
+        setProvincia(post.provincia);
+        setCanton(post.canton);
+        setRating(post.rating);
         // The image file cannot be prefilled; users must upload a new one if needed
       };
       fetchPostData();
@@ -127,6 +135,7 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
               id="description"
               placeholder="Agrega una descripción"
               value={description}
+              style={{color: "black"}}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>

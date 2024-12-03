@@ -125,3 +125,4 @@ export async function GET(
 
   return NextResponse.json({ posts: Object.values(postsWithImages)}, { status: 200 });
 }
+

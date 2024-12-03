@@ -41,8 +41,9 @@ export default function PostCards() {
 
   if (!posts) return <div>Loading...</div>;
   return (
-    <section>
-      {posts.posts.map((post, index) => (
+    
+    ( posts && posts.posts.length > 0 ? (
+      posts.posts.map((post, index) => (
         <Card key={index}>
           <CardHeader>
             {post.images && (
@@ -54,15 +55,15 @@ export default function PostCards() {
               <div className="flex flex-row space-x-2">
                 <CardTitle>{post.authorId}</CardTitle>
                 <div className="w-36">
-                  <RatingStars rating={5} onChange={() => {}} />
+                  <RatingStars rating={5} onChange={() => { }} />
                 </div>
               </div>
               <div className="justify-self-end">
-                <VerticalIcon postId={post.id}/>
+                <VerticalIcon postId={post.id} />
               </div>
             </div>
             <div className="flex flex-row">
-              <MapPinIcon size={16} strokeWidth={1.75} className="text-sky-700"/>
+              <MapPinIcon size={16} strokeWidth={1.75} className="text-sky-700" />
               <p className="text-sm text-sky-700 ">
                 <span>{post.provincia}</span>
               </p>
@@ -70,7 +71,9 @@ export default function PostCards() {
             <div className="line-clamp-4">{post.description}</div>
           </CardContent>
         </Card>
-      ))}
-    </section>
+      ))) : (
+      <div>No posts found.</div>
+    ))
+  
   );
 }
