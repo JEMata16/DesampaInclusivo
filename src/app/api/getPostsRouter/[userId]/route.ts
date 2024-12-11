@@ -83,7 +83,7 @@ export async function GET(
     if (!acc[postId]) {
       acc[postId] = {
         ...row.posts,
-        authorId: username,
+        username: username,
         images: [],
       };
     }

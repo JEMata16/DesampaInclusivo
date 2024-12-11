@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { CantonComboBox, ProvinciaComboBox } from "~/components/ProvinciaComboBox";
 import RatingStars from "~/components/RatingStars";
@@ -40,7 +41,7 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
   const [provincia, setProvincia] = useState<Province | null>(initialData?.provincia || null);
   const [canton, setCanton] = useState<Canton | null>(initialData?.canton || null);
   const [description, setDescription] = useState(initialData?.description || "");
-
+  
   useEffect(() => {
     if (mode === "edit" && postId) {
       // Fetch the existing post data to prefill the form

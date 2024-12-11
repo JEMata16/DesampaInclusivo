@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       console.error(error);
     }
 
-    return NextResponse.json({ message: "File uploaded successfully!" });
+    return NextResponse.json({ message: "Post subido exitosamente!" });
   } catch (error) {
     console.error("Error uploading file:", error);
     return NextResponse.json(

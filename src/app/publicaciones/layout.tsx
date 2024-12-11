@@ -24,11 +24,11 @@ export default function PublicacionesLayout({
           onClick={() => setValue(false)}
           className={`flex items-center justify-center rounded-t-lg py-2  ${!isChosen ? "bg-gray-200" : "hover:bg-gray-200"} `}
         >
-          Usuarios
+          Publicaciones
         </button>
       </nav>
 
-      <div className="min-h-screen bg-gray-200">{children}</div>
+      <div className="static min-h-screen bg-gray-200">{children}</div>
     </>
   );
 }

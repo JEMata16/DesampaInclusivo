@@ -14,7 +14,8 @@ export default function HomePage() {
         <SignedIn>
           <Link href="/test">Dashboard</Link>
           <SignOutButton/>
-        </SignedIn>
+        </SignedIn> 
+        
 
         <SignedOut>
           <AuthOptionsButtons/>
