@@ -1,6 +1,7 @@
+import CapacitacionesForm from "~/components/CapacitacionesForm";
 
 export default function AgregarCapacitaciones() {
     return (
-        <div></div>
+        <CapacitacionesForm mode="create" />
     );
 }

@@ -9,7 +9,7 @@ export default async function Capacitaciones() {
     const { orgRole } = await auth();
 
     return (
-        <main className="flex flex-col static min-h-screen bg-gray-200">
+        <div className="flex flex-col static">
             { orgRole === "admin" ? "" : 
             <Link href="/capacitaciones/agregar" className="rounded-full w-[250px] border bg-blue-500 text-white py-2 mt-2 flex items-center justify-center hover:bg-blue-700 transition duration-300">+ Agregar Capacitacion</Link>}
             <>
@@ -34,6 +34,6 @@ export default async function Capacitaciones() {
                     
                 </div>
             </>
-        </main>
+        </div>
     );
 }
