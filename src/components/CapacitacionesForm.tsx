@@ -28,7 +28,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
   const [name, setName] = useState(initialData?.name || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [link, setLink] = useState(initialData?.link || "");
-  const [date, setDate] = useState<Date | undefined>(initialData?.date || new Date());
+  const [date, setDate] = useState<Date | undefined>(initialData?.date || undefined);
   const [time, setTime] = useState(initialData?.time || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(initialData?.file || null);
   const [message, setMessage] = useState("");
@@ -52,7 +52,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
         setName(capc.name);
         setDescription(capc.description);
         setLink(capc.link);
-        setDate(new Date(capc.date));
+        setDate(capc.date); 
         setTime(capc.time);
         // The image file cannot be prefilled; users must upload a new one if needed
       };
@@ -60,9 +60,11 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
     }
   }, [mode, capcId]);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(e.target.value);
-    setDate(selectedDate);
+  const handleDateChange = (day: Date | undefined) => {
+    if (day) { 
+      console.log(day);
+      setDate(day);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +99,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
     formData.append("date", date.toISOString());
     formData.append("time", (time ?? "").toString());
 
-    const url = mode === "create" ? "/api/capacitaciones/upload" : `/api/capacitacinoes/${capcId}`;
+    const url = mode === "create" ? "/api/training/upload" : `/api/training/${capcId}`;
     const method = mode === "create" ? "POST" : "PUT";
 
     const response = await fetch(url, {
@@ -128,7 +130,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Nombre</Label>
-            <Input id="name" type="text" onChange={(e) => setName(e.target.value)} />
+            <Input id="name" type="text" onChange={(e) => setName(e.target.value)} placeholder="Nombre de la capacitación"/>
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -144,13 +146,13 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Link</Label>
-            <Input id="link" type="text" onChange={(e) => setLink(e.target.value)} />
+            <Input id="link" type="text" onChange={(e) => setLink(e.target.value)} placeholder="Opcional" ></Input>
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Fecha</Label>
             {/* <Input id="date" type="date" onChange={handleDateChange} /> */}
-            <CalendarFormBtn/>
+            <CalendarFormBtn onSelect={handleDateChange} selected={date}/>
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5 pb-5">
@@ -159,7 +161,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
           </div>
 
 
-          <Button variant="default" type="submit">
+          <Button variant="upload" type="submit">
             {mode === "create" ? "Publicar" : "Guardar Cambios"}
           </Button>
         </form>
