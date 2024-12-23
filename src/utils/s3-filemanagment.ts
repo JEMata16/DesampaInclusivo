@@ -32,3 +32,22 @@ export async function generateSignedUrl(fileName: string): Promise<string> {
     return "";
   }
 }
+
+export async function generateSignedUrls(images: any[]) {
+  return Promise.all(
+    images.map(async (image) => {
+      const command = new GetObjectCommand({
+        Bucket: image.bucket,
+        Key: image.fileName,
+      });
+
+      try {
+        const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+        return { ...image, signedUrl };
+      } catch (error) {
+        console.error(`Error generating signed URL for ${image.fileName}:`, error);
+        return { ...image, signedUrl: null };
+      }
+    })
+  );
+}
