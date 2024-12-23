@@ -1,35 +1,9 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "~/server/db";
 import { capacitaciones, files } from "~/server/db/schema";
-import * as https from "https";
-import {
-  GetObjectCommand,
-  GetObjectCommandInput,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { NextResponse } from "next/server";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { generateSignedUrl } from "~/utils/s3-filemanagment";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-const httpAgent = new https.Agent({
-  rejectUnauthorized: false,
-});
-
-const s3Client = new S3Client({
-  region: "us-east-1",
-  endpoint: process.env.S3_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY!,
-    secretAccessKey: process.env.S3_SECRET_KEY!,
-  },
-  forcePathStyle: true,
-  tls: false,
-  requestHandler: new NodeHttpHandler({
-    httpAgent,
-  }),
-});
 
 type Image = {
   fileName: string;
@@ -41,12 +15,12 @@ type Image = {
 type Capc = {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   link?: string;
-  date: string;
+  date: Date;
   time: string;
-  mediaId: string;
-  image: Image[];
+  mediaId: number;
+  image: Image;
 };
 
 export async function GET(req: any) {
@@ -61,56 +35,33 @@ export async function GET(req: any) {
       .innerJoin(files, eq(files.id, capacitaciones.mediaId))
       .orderBy(desc(capacitaciones.date));
 
-    if (!result || result.length === 0) {
-      return NextResponse.json({ capc: [], files: [] }, { status: 200 });
-    }
-
-    const capcWithImages: any = {};
-
-    // Join trainings with images as a single object
-    for (const row of result) {
-      const capcId = row.capc.id;
-      if (!capcWithImages[capcId]) {
-        capcWithImages[capcId] = {
-          ...row.capc,
-          image: {},
-        };
+      if (!result || result.length === 0) {
+        return NextResponse.json({ capcs: [] }, { status: 200 });
       }
 
-      capcWithImages[capcId].image = {
-        fileName: row.files.fileName,
-        originalName: row.files.originalName,
-        bucket: row.files.bucket,
-        size: row.files.size,
-      };
-    }
-
-    // Generate image signed URLs
-    for (const capcId in capcWithImages) {
-      const capc = capcWithImages[capcId];
-      for (const imageKey in capc.images) {
-        const image = capc.images[imageKey];
-        const command: GetObjectCommandInput = {
-          Bucket: image.bucket,
-          Key: image.fileName,
-        };
-
-        try {
-          const signedUrl = await getSignedUrl(
-            s3Client as any,
-            new GetObjectCommand(command) as any,
-            { expiresIn: 3600 },
-          );
-          capc.images[imageKey].signedUrl = signedUrl;
-        } catch (error: any) {
-          console.error("Error generating signed URL:", error.message);
-          capc.images[imageKey].signedUrl = null; // Add a fallback for failed URLs
-        }
-      }
-    }
+      const capcs: Capc[] = await Promise.all(
+        result.map(async (row) => {
+          const signedUrl = await generateSignedUrl(row.files.fileName);
+          return {
+            id: row.capc.id,
+            name: row.capc.name,
+            description: row.capc.description ?? null,
+            link: row.capc.link ?? undefined,
+            date: row.capc.date,
+            time: row.capc.time,
+            mediaId: row.capc.mediaId!,
+            image: {
+              fileName: row.files.fileName,
+              originalName: row.files.originalName,
+              size: row.files.size,
+              signedUrl,
+            },
+          };
+        })
+      );
 
     return NextResponse.json(
-      { capcs: Object.values(capcWithImages) },
+      { capcs },
       { status: 200 },
     );
   } catch (error: any) {

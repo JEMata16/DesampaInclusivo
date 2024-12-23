@@ -1,18 +1,34 @@
-import * as Minio from 'minio'
-import { env } from '~/env'
+import { GetObjectCommand, GetObjectCommandInput, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
  
 // Create a new Minio client with the S3 endpoint, access key, and secret key
-export const s3Client = new Minio.Client({
-  endPoint: env.S3_ENDPOINT,
-  port: env.S3_PORT ? Number(env.S3_PORT) : undefined,
-  accessKey: env.S3_ACCESS_KEY,
-  secretKey: env.S3_SECRET_KEY,
-  useSSL: env.S3_USE_SSL === 'true',
-})
- 
-export async function createBucketIfNotExists(bucketName: string) {
-  const bucketExists = await s3Client.bucketExists(bucketName)
-  if (!bucketExists) {
-    await s3Client.makeBucket(bucketName)
+const s3Client = new S3Client({
+  region: "us-east-1",
+  endpoint: process.env.S3_ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_KEY!,
+  },
+  forcePathStyle: true,
+  tls: false,
+});
+
+// Helper to generate a signed URL for S3 objects
+export async function generateSignedUrl(fileName: string): Promise<string> {
+  const command: GetObjectCommandInput = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: fileName,
+  };
+
+  try {
+    return await getSignedUrl(
+      s3Client as any,
+      new GetObjectCommand(command) as any,
+      { expiresIn: 3600 }
+    );
+  } catch (error) {
+    console.error(`Error generating signed URL for file "${fileName}":`, error);
+    return "";
   }
 }
