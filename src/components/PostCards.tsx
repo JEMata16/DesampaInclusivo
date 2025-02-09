@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import VerticalIcon from "./VerticalIcon";
 import { MapPinIcon } from "lucide-react";
 import Loading from "./Loading";
+import Image from "next/image";
 
 
 type Data = {
@@ -72,10 +73,11 @@ export default function PostCards({ userId }: { userId: string | null | undefine
       <div className="mx-auto grid w-full h-full max-w-5xl gap-4 p-3 md:grid-cols-2 ">
         {posts && posts.posts.length > 0 ? (
           posts.posts.map((post, index) => (
-            <Card key={index}>
+            <Card key={index} className="max-h-screen">
               <CardHeader>
                 {post.images && (
-                  <img src={post.images[0].signedUrl} alt="User Image" />
+                  <div className="container sm">  <Image src={post.images[0].signedUrl} alt="User Image" className="object-cover" width={500} height={100} /></div>
+                
                 )}
               </CardHeader>
               <CardContent>

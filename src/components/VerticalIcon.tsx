@@ -7,11 +7,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
 type VerticalIconProps = {
-  postId: string;
-  userId: string | null | undefined;
+  postId?: string;
+  userId?: string | null | undefined;
+  capcId?: string;
 };
 
-export default function VerticalIcon({ postId, userId }: VerticalIconProps) {
+export default function VerticalIcon({ postId, userId, capcId }: VerticalIconProps) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = window.matchMedia("(min-width: 768px)").matches;
   const router = useRouter();

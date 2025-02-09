@@ -3,12 +3,13 @@
 
 import { relations, sql } from "drizzle-orm";
 import {
+  date,
   index,
   integer,
-  pgEnum,
   pgTableCreator,
   primaryKey,
   serial,
+  time,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -104,9 +105,11 @@ export const files = createTable("files", {
   uniqueFile: index("unique_file").on(t.bucket, t.fileName),
 }));
 
-export const filesRelations = relations(files, ({many}) => ({
+export const filesRelations = relations(files, ({one, many}) => ({
   postsToFiles: many(postsToFiles),
   videos: many(videos),
+  capacitaciones: one(capacitaciones),
+  
 }))
 
 export const postsToFiles = createTable("postsMedia", {
@@ -172,5 +175,28 @@ export const decorationTexts = createTable("decoration_texts", {
   description: varchar("description", {length: 255}),
   icon: varchar("icon").notNull()
 });
+
+
+//Modulo capacitaciones
+
+export const capacitaciones = createTable("capacitaciones", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", {length: 150}).unique().notNull(),
+  description: varchar("description", {length: 255}),
+  link: varchar("link", {length: 255}).unique(),
+  date: date("traning_date", {mode: "date"}).notNull(),
+  time: time("traning_time").notNull(),
+  mediaId: integer("file_id").references(() => files.id),},
+(t) => ({
+  nameIndex: index("name_index").on(t.name),
+}));
+
+
+export const capacitacionesRelations = relations(capacitaciones, ({one}) => ({
+  file: one(files, {
+    fields: [capacitaciones.mediaId],
+    references: [files.id],
+  }),
+}));
 
 

@@ -14,31 +14,32 @@ import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Readable } from "stream";
+import { generateSignedUrls } from "~/utils/s3-filemanagment";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const httpAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-const s3Client = new S3Client({
-  region: "us-east-1",
-  endpoint: process.env.S3_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY!,
-    secretAccessKey: process.env.S3_SECRET_KEY!,
-  },
-  forcePathStyle: true,
-  tls: false,
-  requestHandler: new NodeHttpHandler({
-    httpAgent,
-  }),
-});
+  const s3Client = new S3Client({
+    region: "us-east-1",
+    endpoint: process.env.S3_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY!,
+      secretAccessKey: process.env.S3_SECRET_KEY!,
+    },
+    forcePathStyle: true,
+    tls: false,
+    requestHandler: new NodeHttpHandler({
+      httpAgent,
+    }),
+  });
 
 type Image = {
   fileName: string;
   originalName: string;
   size: number;
-  signedUrl: string;
+  signedUrl: string | null;
 };
 
 type Post = {
@@ -48,8 +49,9 @@ type Post = {
   canton: string;
   rating: number;
   authorId: string;
-  createdAt: string;
-  updatedAt: string | null;
+  username: string;
+  createdAt: Date;
+  updatedAt: Date | string;
   images: Image[];
 };
 
@@ -86,60 +88,33 @@ export async function GET(
       .where(eq(posts.id, postId));
 
     if (!result || result.length === 0) {
-      return NextResponse.json({ posts: [], files: [] }, { status: 200 });
+      return NextResponse.json({ posts: [] }, { status: 200 });
     }
 
     const user = await clerkClient().users.getUser(userId);
     const username = user?.username || "Unknown";
 
-    // Group files by postId
-    const postsWithImages = result.reduce((acc: any, row: any) => {
-      const postId = row.posts.id;
-
-      if (!acc[postId]) {
-        acc[postId] = {
-          ...row.posts,
-          username: username,
-          images: [],
-        };
-      }
-
-      acc[postId].images.push({
+    // Transform result into Post structure
+    const post: Post = {
+      id: result[0]!.posts.id,
+      description: result[0]!.posts.description ?? '',
+      provincia: result[0]!.posts.provincia ?? '',
+      canton: result[0]!.posts.canton ?? '',
+      rating: result[0]!.posts.rating ?? 0,
+      authorId: result[0]!.posts.authorId ?? '',
+      createdAt: result[0]!.posts.createdAt ?? '',
+      updatedAt: result[0]!.posts.updatedAt ?? '',
+      username,
+      images: result.map((row) => ({
         fileName: row.files.fileName,
         originalName: row.files.originalName,
-        bucket: row.files.bucket,
         size: row.files.size,
-      });
-
-      return acc;
-    }, {});
-
-    // Generate image signed URLs
-    for (const postId in postsWithImages) {
-      const post = postsWithImages[postId];
-      for (let i = 0; i < post.images.length; i++) {
-        const image = post.images[i];
-        const command: GetObjectCommandInput = {
-          Bucket: image.bucket,
-          Key: image.fileName,
-        };
-
-        try {
-          const signedUrl = await getSignedUrl(
-            s3Client as any,
-            new GetObjectCommand(command) as any,
-            { expiresIn: 3600 },
-          );
-          post.images[i].signedUrl = signedUrl;
-        } catch (error: any) {
-          console.error("Error generating signed URL:", error.message);
-          post.images[i].signedUrl = null; // Add a fallback for failed URLs
-        }
-      }
-    }
-
+        signedUrl: null, // Placeholder
+      })),
+    };
+    post.images = await generateSignedUrls(post.images);
     return NextResponse.json(
-      { posts: Object.values(postsWithImages) },
+      { posts: [post] },
       { status: 200 },
     );
   } catch (error: any) {
@@ -247,7 +222,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const postId = parseInt(params.id, 10);
@@ -255,7 +230,7 @@ export async function DELETE(
     if (isNaN(postId)) {
       return NextResponse.json(
         { error: "Invalid post ID" },
-        { status: 400 } // Bad Request
+        { status: 400 }, // Bad Request
       );
     }
 
@@ -263,7 +238,7 @@ export async function DELETE(
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { status: 400 } // Bad Request
+        { status: 400 }, // Bad Request
       );
     }
 
@@ -292,29 +267,28 @@ export async function DELETE(
     }
 
     // Delete associations in postsToFiles
-    await db
-      .delete(postsToFiles)
-      .where(eq(postsToFiles.postsId, postId));
+    await db.delete(postsToFiles).where(eq(postsToFiles.postsId, postId));
 
     // Delete files metadata
-    await db
-      .delete(files)
-      .where(inArray(files.id, filesToDelete.map((file) => file.id)));
+    await db.delete(files).where(
+      inArray(
+        files.id,
+        filesToDelete.map((file) => file.id),
+      ),
+    );
 
     // Finally, delete the post
-    await db
-      .delete(posts)
-      .where(eq(posts.id, postId));
+    await db.delete(posts).where(eq(posts.id, postId));
 
     return NextResponse.json(
       { message: "Post and associated files deleted successfully!" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error deleting the post:", error);
     return NextResponse.json(
       { error: "Failed to delete the post" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
