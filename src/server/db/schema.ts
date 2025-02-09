@@ -90,17 +90,19 @@ export const repliesRelations = relations(replies, ({one}) => ({
 
 
 // FILES OF POSTS AND VIDEOS
-export const files = createTable('files', {
-  id: serial('id').primaryKey(),
-  bucket: varchar('bucket', {length: 100}).notNull(),
-  fileName: varchar('file_name').notNull(),
-  originalName: varchar('original_name').notNull(),
-  createdAt: timestamp('created_at', {withTimezone: true})
+export const files = createTable("files", {
+  id: serial("id").primaryKey(),
+  bucket: varchar("bucket", { length: 100 }).notNull(),
+  fileName: varchar("file_name").notNull(),
+  originalName: varchar("original_name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
-    .default(sql`current_date`),
-  size: integer('size').notNull(),
-  authorId: varchar('author_id'),
-});
+    .default(sql`CURRENT_TIMESTAMP`),
+  size: integer("size").notNull(),
+  authorId: varchar("author_id"),
+}, (t) => ({
+  uniqueFile: index("unique_file").on(t.bucket, t.fileName),
+}));
 
 export const filesRelations = relations(files, ({many}) => ({
   postsToFiles: many(postsToFiles),
@@ -128,7 +130,10 @@ export const postsToFilesRelations = relations(postsToFiles, ({one}) => ({
 
 export const videos = createTable("videos", {
   id: serial("id").primaryKey(),
-  mediaId: integer("file_id"),
+  mediaId: integer("file_id").notNull().unique().references(() => files.id),
+  title: varchar("title", {length: 255}).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }),
 });
 
 export const videosRelations = relations(videos, ({one}) => ({
