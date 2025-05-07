@@ -43,10 +43,10 @@ type Data = {
 
 export async function GET(
   req: Request,
-  { params }: { params: { userId: { userId: string } } },
+  { params }: { params: { userId: string } },
 ) {
 
-  const {userId} = await params.userId;
+  const {userId} = await params;
   // Fetch posts con sus archivos asociados
   const result = await db.select({
     posts: posts,
