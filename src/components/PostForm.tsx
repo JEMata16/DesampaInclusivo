@@ -54,7 +54,6 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
           },
         );
         const data = await response.json();
-        console.log(data.posts[0]);
         const post = data.posts[0];
         setDescription(post.description);
         setProvincia(post.provincia);

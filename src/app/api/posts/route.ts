@@ -5,14 +5,13 @@ import * as https from "https";
 import {
   GetObjectCommand,
   GetObjectCommandInput,
-  PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { Readable } from "stream";
+import { clerkClient } from "@clerk/nextjs/server";
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const httpAgent = new https.Agent({
@@ -73,6 +72,8 @@ export async function GET(
 
 
     const postsWithImages: any = {};
+
+
 
     for (const row of result) {
       const postId = row.posts.id;

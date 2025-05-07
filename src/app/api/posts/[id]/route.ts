@@ -57,8 +57,9 @@ type Post = {
 
 export async function GET(
   req: Request,
-  { params: { id } }: { params: { id: string } },
+   {params}:  { params: { id: string } },
 ) {
+  const { id } = await params;
   try {
     const postId = parseInt(id, 10);
     if (isNaN(postId)) {

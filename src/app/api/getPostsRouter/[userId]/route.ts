@@ -42,13 +42,11 @@ type Data = {
 }
 
 export async function GET(
-  req: any,
-  {
-    params: { userId },
-  }: {
-    params: { userId: string };
-  },
+  req: Request,
+  { params }: { params: { userId: { userId: string } } },
 ) {
+
+  const {userId} = await params.userId;
   // Fetch posts con sus archivos asociados
   const result = await db.select({
     posts: posts,
@@ -64,7 +62,7 @@ export async function GET(
     return NextResponse.json({ posts: [], files: [] }, { status: 200 });
   }
 
-  const { username } = await clerkClient().users.getUser(userId);
+  const { username } = await Promise.resolve(clerkClient().users.getUser(userId));
   
   // Agrupar los archivos por postId
   const postsWithImages = result.reduce((acc: any, row: any) => {

@@ -1,3 +1,4 @@
+
 import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
@@ -11,22 +12,21 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }], // Cambiar icono de scaffolding después
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      
-        <html lang="en" className={`${GeistSans.variable}`}>
-          <body>
-            <Header />
-            <MyProvider>
+    <html lang="en" className={`${GeistSans.variable}`}>
+      <body>
+        <ClerkProvider>
+          <Header />
+          <MyProvider>
             {children}
-            </MyProvider>
-          </body>
-        </html>
-    </ClerkProvider>
+          </MyProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

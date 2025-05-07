@@ -1,12 +1,11 @@
 "use client";
 import PostForm from "~/components/PostForm";
+import { use } from 'react';
 
+export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const paramsValue = use(params);
 
-export default function EditPostPage({params}: {params: {id: string}}) {
-    const postId = params.id;
-
-    return (
-        <PostForm mode="edit" postId={postId} />
-    );
-    
+  return (
+    <PostForm mode="edit" postId={paramsValue.id} />
+  );
 }
