@@ -61,7 +61,14 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
   }, [mode, capcId]);
 
   const handleDateChange = (day: Date | undefined) => {
-    if (day) { 
+    if (day) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (day < today) {
+        setMessage("¡Lo sentimos! No puede seleccionar una fecha anterior a la actual.");
+        setTimeout(() => setMessage(""), 5000);
+        return;
+      }
       console.log(day);
       setDate(day);
     }
@@ -77,17 +84,20 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
     e.preventDefault();
 
     if (!description.trim()) {
-      setMessage("Por favor ingrese una descripción.");
+      setMessage("¡Lo sentimos! La descripción no puede estar vacía.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!date) {
-      setMessage("Por favor seleccione una fecha.");
+      setMessage("¡Lo sentimos! Debe seleccionar una fecha.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!time) {
-      setMessage("Por favorse seleccione una hora.");
+      setMessage("¡Lo sentimos! Debe seleccionar una hora.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
@@ -118,7 +128,10 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
         <h1 className="mb-4 text-left text-3xl font-bold">
           {mode === "create" ? "Crear Capacitación" : "Editar Capacitación"}
         </h1>
-        {message && <p className="mb-4 text-red-500">{message}</p>}
+        {message && (
+          <div className="mb-4 rounded-lg bg-red-100 p-4 text-red-700 shadow-md">
+            {message}
+            </div>)}
         <form
           className="flex max-w-md flex-col space-y-3"
           onSubmit={handleSubmit}

@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { Drawer } from "~/components/ui/drawer";
 
 type Province = {
   id: number | undefined;
@@ -36,6 +37,10 @@ type PostFormProps = {
 export default function PostForm({ mode, postId, initialData }: PostFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(initialData?.file || null);
   const [message, setMessage] = useState("");
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerMessage, setDrawerMessage] = useState("");
+  const [drawerError, setDrawerError] = useState(false);
+  const router = useRouter();
   const { userId } = useAuth();
   const [rating, setRating] = useState(initialData?.rating || 0);
   const [provincia, setProvincia] = useState<Province | null>(initialData?.provincia || null);
@@ -79,17 +84,20 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
     e.preventDefault();
 
     if (!description.trim()) {
-      setMessage("Por favor ingrese una descripción.");
+      setMessage("¡Lo sentimos! La descripción no puede estar vacía.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!provincia) {
-      setMessage("Por favor seleccione una provincia.");
+      setMessage("¡Lo sentimos! Debe seleccionar una provincia.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
     if (!rating) {
-      setMessage("Por favor seleccione una puntuación.");
+      setMessage("¡Lo sentimos! Debe seleccionar una calificación.");
+      setTimeout(() => setMessage(""), 5000);
       return;
     }
 
@@ -110,7 +118,22 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
     });
 
     const data = await response.json();
-    setMessage(data.message || data.error);
+    if (data.message || !data.error) {
+      setDrawerMessage("¡Publicación realizada exitosamente! Redirigiendo...");
+      setDrawerError(false);
+      setDrawerVisible(true);
+      setTimeout(() => {
+        setDrawerVisible(false);
+        router.push("/publicaciones");
+      }, 3000);
+    } else {
+      setDrawerMessage(data.error || "¡Lo sentimos! Ocurrió un error al publicar.");
+      setDrawerError(true);
+      setDrawerVisible(true);
+      setTimeout(() => {
+        setDrawerVisible(false);
+      }, 3000);
+    }
   };
 
   return (
@@ -119,7 +142,10 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
         <h1 className="mb-4 text-left text-3xl font-bold">
           {mode === "create" ? "Publicar" : "Editar Publicación"}
         </h1>
-        {message && <p className="mb-4 text-red-500">{message}</p>}
+        {message && (
+          <div className="mb-4 rounded-lg bg-red-100 p-4 text-red-700 shadow-md">
+            {message}
+            </div>)}
         <form
           className="flex max-w-md flex-col space-y-3"
           onSubmit={handleSubmit}
@@ -167,6 +193,49 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
           </Button>
         </form>
       </div>
+      {drawerVisible && (
+  <Drawer>
+    <div
+      className={`p-4 text-center ${
+        drawerError ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"
+      } rounded-lg shadow-md flex flex-col items-center`}
+    >
+      {!drawerError ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12 text-green-700 mb-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12 text-red-700 mb-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      )}
+
+      <p className="text-lg font-semibold">{drawerMessage}</p>
     </div>
+  </Drawer>
+)}
+  </div>
   );
 }

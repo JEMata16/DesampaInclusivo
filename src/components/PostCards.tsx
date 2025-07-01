@@ -107,7 +107,11 @@ export default function PostCards({ userId }: { userId: string | null | undefine
             </Card>
           ))
         ) : (
-          <div>Sin publicaciones encontradas.</div>
+          <div className="flex items-center justify-center h-full p-6 bg-gray-100 rounded-lg shadow-md">
+            <p className="text-lg font-semibold text-gray-700">
+              ¡Aún no ha realizado ninguna publicación! No dude en compartir sus experiencias y ayudar a la comunidad.
+            </p>
+          </div>
         )}
       </div>
     </>
