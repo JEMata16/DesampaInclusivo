@@ -7,7 +7,7 @@ import {
   GetObjectCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { clerkClient } from "@clerk/nextjs/server";

@@ -4,14 +4,11 @@ import { files, posts, postsToFiles } from "~/server/db/schema";
 import * as https from "https";
 import {
   DeleteObjectCommand,
-  GetObjectCommand,
-  GetObjectCommandInput,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { NextResponse } from "next/server";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { Readable } from "stream";
 import { generateSignedUrls } from "~/utils/s3-filemanagment";
@@ -21,19 +18,19 @@ const httpAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-  const s3Client = new S3Client({
-    region: "us-east-1",
-    endpoint: process.env.S3_ENDPOINT,
-    credentials: {
-      accessKeyId: process.env.S3_ACCESS_KEY!,
-      secretAccessKey: process.env.S3_SECRET_KEY!,
-    },
-    forcePathStyle: true,
-    tls: false,
-    requestHandler: new NodeHttpHandler({
-      httpAgent,
-    }),
-  });
+const s3Client = new S3Client({
+  region: "us-east-1",
+  endpoint: process.env.S3_ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET_KEY!,
+  },
+  forcePathStyle: true,
+  tls: false,
+  requestHandler: new NodeHttpHandler({
+    httpAgent,
+  }),
+});
 
 type Image = {
   fileName: string;
