@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import Header from "../components/Header";
 import MyProvider from "~/utils/posts/layoutContext";
+import Navbar from "~/components/Navbar";
 
 
 export const metadata = {
@@ -21,7 +22,7 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <ClerkProvider>
-          <Header />
+          <Navbar />
           <MyProvider>
             {children}
           </MyProvider>

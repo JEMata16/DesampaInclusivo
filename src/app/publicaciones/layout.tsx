@@ -13,7 +13,7 @@ export default function PublicacionesLayout({
 
   return (
     <>
-      <nav className="grid grid-cols-2 ">
+      <nav className="grid grid-cols-2">
         <button
           onClick={() => setValue(true)}
           className={`flex items-center justify-center rounded-t-lg py-2  ${isChosen ? "bg-gray-200" : "hover:bg-gray-200"} `}
