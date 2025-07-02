@@ -76,7 +76,10 @@ type Province = {
 export function ProvinciaComboBox({ onProvinciaSelect }: { onProvinciaSelect: (data:{id: number | undefined, name: string | undefined}) => void;
 selectedProvincia: Province | null }) {
   const [open, setOpen] = React.useState(false)
-  const isDesktop = window.matchMedia("(min-width: 768px)").matches
+  const [isDesktop, setIsDesktop] = React.useState(false);
+   React.useEffect(() => {
+    setIsDesktop(window.matchMedia("(min-width: 768px)").matches);
+  }, []);
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(null)
 
   const handleSelectProvincia = (provincia: Status | null) => {
@@ -157,7 +160,10 @@ type Canton = {
 export function CantonComboBox({ provinceId, onCantonSelect }: { provinceId: number | undefined, onCantonSelect: (data: {name: string | undefined}) => void;
 selectedCanton: Canton | null }) {
   const [open, setOpen] = React.useState(false)
-  const isDesktop = window.matchMedia("(min-width: 768px)").matches
+  const [isDesktop, setIsDesktop] = React.useState(false);
+  React.useEffect(() => {
+    setIsDesktop(window.matchMedia("(min-width: 768px)").matches);
+  }, []);
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(null)
 
   const handleSelectCanton = (canton: Status | null) => {

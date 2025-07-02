@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
-    "@aws-sdk/node-http-handler": "^3.787.0",
     "@aws-sdk/s3-request-presigner": "^3.787.0",
     "@clerk/nextjs": "^5.7.5",
     "@radix-ui/react-dialog": "^1.1.11",
@@ -65,7 +64,7 @@
   "ct3aMetadata": {
     "initVersion": "7.34.0"
   },
-  "packageManager": "pnpm@9.2.0",
+  "packageManager": "pnpm@10.12.4",
   "pnpm": {
     "overrides": {
       "micromatch@<4.0.8": ">=4.0.8",
