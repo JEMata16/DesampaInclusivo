@@ -1,13 +1,9 @@
 import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import * as https from "https";
 import { NextResponse } from "next/server";
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-const httpAgent = new https.Agent({
-  rejectUnauthorized: false,
-});
+
 const s3Client = new S3Client({
   region: "us-east-1",
   endpoint: process.env.S3_ENDPOINT,
@@ -17,10 +13,8 @@ const s3Client = new S3Client({
   },
   forcePathStyle: true,
   tls: false,
-  requestHandler: new NodeHttpHandler({
-    httpAgent,
-  }),
 });
+
 
 export async function GET(req: any) {
     try {
