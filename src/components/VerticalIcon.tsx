@@ -55,7 +55,7 @@ export default function VerticalIcon({ postId, userId, capcId }: VerticalIconPro
               </li>
               <li className="flex items-center cursor-pointer p-2 hover:bg-gray-100" onClick={handleDeletePost}>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Borrar publicación
+                Eliminar Publicación
               </li>
             </ul>
           </div>
@@ -84,7 +84,7 @@ export default function VerticalIcon({ postId, userId, capcId }: VerticalIconPro
               </CommandItem>
               <CommandItem onClick={handleDeletePost}>
                 <Trash2 className="mr-2 h-4 w-4" />
-                <span>Borrar Publicacion</span>
+                <span>Eliminar Publicación</span>
               </CommandItem>
             </CommandList>
           </div>

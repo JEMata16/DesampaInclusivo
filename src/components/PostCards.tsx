@@ -29,31 +29,31 @@ type Posts = {
 export default function PostCards({ userId }: { userId: string | null | undefined }) {
   const [posts, setPosts] = useState<Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     // fetch data
     const fetchData = async () => {
       setIsLoading(true);
       switch (userId) {
         case null:
-          try{
+          try {
             const response = await fetch(`api/posts`);
             const data = await response.json();
             setPosts(data);
-          }catch(error){
+          } catch (error) {
             console.error(error);
-          }finally{
+          } finally {
             setIsLoading(false);
           }
           break;
         case userId:
-          try{
+          try {
             const response = await fetch(`api/getPostsRouter/${userId}`, { method: "GET" });
             const data = await response.json();
             setPosts(data);
-          }catch(error){
+          } catch (error) {
             console.error(error);
-          }finally{
+          } finally {
             setIsLoading(false);
           }
           break;
@@ -65,54 +65,80 @@ export default function PostCards({ userId }: { userId: string | null | undefine
 
   if (isLoading)
     return (
-  
+
       <Loading />
     );
   return (
     <>
-      <div className="mx-auto grid w-full h-full max-w-5xl gap-4 p-3 md:grid-cols-2 ">
-        {posts && posts.posts.length > 0 ? (
-          posts.posts.map((post, index) => (
-            <Card key={index} className="max-h-screen">
-              <CardHeader>
-                {post.images && (
-                  <div className="container sm">  <Image src={post.images[0].signedUrl} alt="User Image" className="object-cover" width={500} height={100} /></div>
-                
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2  ">
-                  <div className="flex flex-row space-x-2">
-                    <CardTitle>{post.username}</CardTitle>
-                    <div className="w-36">
-                      <RatingStars rating={5} onChange={() => {}} />
-                    </div>
-                  </div>
-                  <div className="justify-self-end">
-                    {userId === post.authorId && <VerticalIcon postId={post.id} userId={userId}/>}
-                  </div>
-                </div>
-                <div className="flex flex-row">
-                  <MapPinIcon
-                    size={16}
-                    strokeWidth={1.75}
-                    className="text-sky-700"
+      <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 py-6">
+        <div className="mx-auto grid w-full gap-6 grid-cols-1 md:grid-cols-2">
+          {posts && posts.posts.length > 0 ? (
+            posts.posts.map((post, index) => (
+              <Card
+                key={index}
+                className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
+              >
+                {/* Image */}
+                <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <Image
+                    src={post.images[0].signedUrl}
+                    alt="Imagen de la publicación"
+                    className="object-cover w-full h-full"
+                    width={500}
+                    height={625}
+                    priority={index < 2}
                   />
-                  <p className="text-sm text-sky-700 ">
-                    <span>{post.provincia}</span>
-                  </p>
                 </div>
-                <div className="line-clamp-4">{post.description}</div>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <div className="flex items-center justify-center h-full p-6 bg-gray-100 rounded-lg shadow-md">
-            <p className="text-lg font-semibold text-gray-700">
-              ¡Aún no ha realizado ninguna publicación! No dude en compartir sus experiencias y ayudar a la comunidad.
-            </p>
-          </div>
-        )}
+                {/* User and actions */}
+                <div className="flex items-center justify-between px-4 pt-3">
+                  <div className="flex items-center gap-2">
+                    {/* Optional: User avatar */}
+                    {/* <Avatar src={post.avatarUrl} alt={post.username} /> */}
+                    <span className="font-semibold text-primary-600">{post.username}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center text-sky-700 text-base">
+                      <MapPinIcon size={16} className="mr-1" />
+                      {post.provincia}
+                    </span>
+                    {userId === post.authorId && (
+                      <VerticalIcon postId={post.id} userId={userId} />
+                    )}
+                  </div>
+                </div>
+                {/* Content */}
+                <CardContent className="flex flex-col gap-2 px-4 pb-4">
+                  <div className="flex items-center gap-2 mt-2 mb-4">
+                    <RatingStars rating={post.rating} onChange={() => { }} />
+                  </div>
+                  <div className="text-gray-700 text-sm line-clamp-4">{post.description}</div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full w-full flex flex-col items-center justify-center min-h-[60vh] p-8 bg-white bg-opacity-90 rounded-2xl shadow-xl">
+              <Image
+                src="/Nodata.png"
+                alt="Sin datos"
+                width={500}
+                height={500}
+                className="mb-1"
+              />
+              <h2 className="text-2xl font-bold text-primary-600 mb-4 text-center">
+                ¡Aún no has realizado ninguna publicación!
+              </h2>
+              <p className="text-lg font-semibold text-gray-700 mb-4 text-center">
+                No dudes en compartir tus experiencias y apoyar a la comunidad.
+              </p>
+              <a
+                href="/publicaciones/agregar"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg"
+              >
+                Publicar mi experiencia
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

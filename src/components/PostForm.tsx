@@ -10,6 +10,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import { Drawer } from "~/components/ui/drawer";
+import { ArrowLeft } from "lucide-react";
 
 type Province = {
   id: number | undefined;
@@ -46,7 +47,7 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
   const [provincia, setProvincia] = useState<Province | null>(initialData?.provincia || null);
   const [canton, setCanton] = useState<Canton | null>(initialData?.canton || null);
   const [description, setDescription] = useState(initialData?.description || "");
-  
+
   useEffect(() => {
     if (mode === "edit" && postId) {
       // Fetch the existing post data to prefill the form
@@ -85,19 +86,19 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
 
     if (!description.trim()) {
       setMessage("¡Lo sentimos! La descripción no puede estar vacía.");
-      setTimeout(() => setMessage(""), 5000);
+      setTimeout(() => setMessage(""), 3000);
       return;
     }
 
     if (!provincia) {
-      setMessage("¡Lo sentimos! Debe seleccionar una provincia.");
-      setTimeout(() => setMessage(""), 5000);
+      setMessage("¡Lo sentimos! Debes seleccionar una provincia.");
+      setTimeout(() => setMessage(""), 3000);
       return;
     }
 
     if (!rating) {
-      setMessage("¡Lo sentimos! Debe seleccionar una calificación.");
-      setTimeout(() => setMessage(""), 5000);
+      setMessage("¡Lo sentimos! Debes seleccionar una calificación.");
+      setTimeout(() => setMessage(""), 3000);
       return;
     }
 
@@ -125,7 +126,7 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
       setTimeout(() => {
         setDrawerVisible(false);
         router.push("/publicaciones");
-      }, 3000);
+      }, 2000);
     } else {
       setDrawerMessage(data.error || "¡Lo sentimos! Ocurrió un error al publicar.");
       setDrawerError(true);
@@ -137,22 +138,62 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col py-5 text-blue-500">
-      <div className="m-5 p-8">
-        <h1 className="mb-4 text-left text-3xl font-bold">
-          {mode === "create" ? "Publicar" : "Editar Publicación"}
-        </h1>
+    <div className="flex min-h-screen flex-col items-center justify-start pt-12 bg-gradient-to-r from-primary-50 to-purple-50">
+      <div className="w-full max-w-lg bg-white bg-opacity-90 rounded-2xl shadow-xl p-8">
         {message && (
-          <div className="mb-4 rounded-lg bg-red-100 p-4 text-red-700 shadow-md">
-            {message}
-            </div>)}
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-100 p-4 text-red-700 shadow-md animate-fade-in">
+            <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{message}</span>
+          </div>
+        )}
+        {drawerVisible && (
+          <div
+            className={`mb-4 flex items-center gap-2 rounded-lg p-4 shadow-md animate-fade-in ${drawerError
+              ? "bg-red-100 text-red-700"
+              : "bg-green-100 text-green-700"
+              }`}
+          >
+            {drawerError ? (
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            <span className="font-semibold">{drawerMessage}</span>
+          </div>
+        )}
+
+        <div className="flex items-center mb-2">
+          <button
+            type="button"
+            aria-label="Volver a publicaciones"
+            onClick={() => router.push("/publicaciones")}
+            className="mr-2 p-2 rounded-full hover:bg-primary-100 transition-colors"
+          >
+            <ArrowLeft className="h-6 w-6 text-primary-600" />
+          </button>
+          <h1 className="text-3xl font-extrabold text-primary-600">
+            {mode === "create" ? "Publicar" : "Editar Publicación"}
+          </h1>
+        </div>
+        <p className="mb-6 text-gray-500">
+          Comparte tu experiencia con la accesibilidad de los sitios que visitas y ayuda a otros a descubrir espacios más accesibles.
+        </p>
+
         <form
           className="flex max-w-md flex-col space-y-3"
           onSubmit={handleSubmit}
         >
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Imagen</Label>
-            <Input id="file" type="file" onChange={handleFileChange} />
+            <Input id="file"
+              type="file"
+              onChange={handleFileChange} />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -161,7 +202,7 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
               id="description"
               placeholder="Agrega una descripción"
               value={description}
-              style={{color: "black"}}
+              style={{ color: "black" }}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
@@ -188,54 +229,11 @@ export default function PostForm({ mode, postId, initialData }: PostFormProps) {
             <RatingStars rating={rating} onChange={handleRatingChange} />
           </div>
 
-          <Button variant="default" type="submit">
+          <Button variant="default" type="submit" className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all">
             {mode === "create" ? "Publicar" : "Guardar Cambios"}
           </Button>
         </form>
       </div>
-      {drawerVisible && (
-  <Drawer>
-    <div
-      className={`p-4 text-center ${
-        drawerError ? "text-red-700 bg-red-100" : "text-green-700 bg-green-100"
-      } rounded-lg shadow-md flex flex-col items-center`}
-    >
-      {!drawerError ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-green-700 mb-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-red-700 mb-2"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      )}
-
-      <p className="text-lg font-semibold">{drawerMessage}</p>
     </div>
-  </Drawer>
-)}
-  </div>
   );
 }
