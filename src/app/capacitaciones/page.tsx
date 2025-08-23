@@ -2,9 +2,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, ClockIcon, MapPinIcon } from "lucide-react";
+import { CalendarIcon, ClockIcon, MapPinIcon, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import Image from "next/image";
 
 export const revalidate = 60
 
@@ -20,53 +21,110 @@ type Capc = {
     link?: string;
     date: string;
     time: string;
-    image: 
-        {
-            fileName: string;
-            signedUrl: string;
-        }
-    
-};
+    image:
+    {
+        fileName: string;
+        signedUrl: string;
+    }
 
+};
 
 export default async function Capacitaciones() {
     const { orgRole } = await auth();
     const result = await fetch("http://localhost:3000/api/training");
     const data: Data = await result.json();
-    
+
     return (
-
-        <div className="flex flex-col static">
-            {orgRole === "admin" ? "" :
-                <Link href="/capacitaciones/agregar" className="rounded-full w-[250px] border bg-blue-500 text-white py-2 mt-2 flex items-center justify-center hover:bg-blue-700 transition duration-300">+ Agregar Capacitacion</Link>}
-            <>
-                {data.capcs ? data.capcs.map((capc) => (
-                    <div key={capc.id} className="mx-auto grid w-full h-full max-w-5xl gap-4 p-3 md:grid-cols-2 ">
-                        <Card key={capc.id}>
-                            <CardHeader>
-                                <img alt="IMAGE" src={capc.image.signedUrl} /></CardHeader>
-                            <CardContent>
-                                <CardTitle className="pb-2">{capc.name}</CardTitle>
-                                <div className="mb-4 grid items-start pb-4 gap-2 last:mb-0 last:pb-0">
-                                    <div className="flex">
-                                        <CalendarIcon className="h-4 w-4 translate-y-[3px]" />
-                                        <p className="ml-2">{format((capc.date).slice(0, 10), "PPP", { locale: es })}</p>
-                                    </div>
-                                    <div className="flex">
-                                        <ClockIcon className="h-4 w-4 translate-y-[3px]" />
-                                        <p className="ml-2">{capc.time}</p>
-                                    </div>
-                                    <button className="rounded-full border border-gray-600 px-4 py-2 mt-2 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition duration-300">Ver más</button>
+        <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 pt-4">
+            <div className="mx-auto w-full max-w-6xl">
+                {orgRole === "admin" ? "" :
+                    <Link
+                        href="/capacitaciones/agregar"
+                        className="rounded-md w-[220px] border bg-blue-600 text-white py-2 mb-4 flex items-center justify-center hover:bg-blue-700 transition duration-300 ml-3"
+                    >
+                        + Agregar Capacitación
+                    </Link>
+                }
+                <div className="grid w-full gap-6 grid-cols-1 md:grid-cols-2">
+                    {data.capcs && data.capcs.length > 0 ? (
+                        data.capcs.map((capc) => (
+                            <Card
+                                key={capc.id}
+                                className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
+                            >
+                                <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
+                                    <Image
+                                        src={capc.image.signedUrl}
+                                        alt={capc.name}
+                                        className="object-cover w-full h-full"
+                                        width={500}
+                                        height={300}
+                                        priority
+                                    />
                                 </div>
-                            </CardContent>
-                        </Card>
-
-                    </div>
-                )) : <div>No hay capacitaciones</div>}
-            </>
-
+                                <CardContent className="flex flex-col gap-1 px-4 pb-4 flex-1">
+                                    <span className="font-semibold text-primary-600 text-lg mt-3 mb-1">{capc.name}</span>
+                                    <div className="flex flex-col gap-0 mb-0">
+                                        <span className="flex items-center text-black text-base">
+                                            <CalendarIcon size={16} className="mr-1" />
+                                            {format((capc.date).slice(0, 10), "PPP", { locale: es })}
+                                        </span>
+                                        <span className="flex items-center text-black text-base">
+                                            <ClockIcon size={16} className="mr-1" />
+                                            {capc.time}
+                                        </span>
+                                    </div>
+                                    <div className="text-gray-700 text-sm line-clamp-4 mb-0">{capc.description}</div>
+                                    {capc.link && (
+                                        <a
+                                            href={capc.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center text-primary-600 hover:underline mb-0"
+                                        >
+                                            <span className="flex items-center text-base">
+                                            <LinkIcon size={16} className="mr-1"/>
+                                            Haz clic aquí para redirigirte a la capacitación
+                                            </span>
+                                        </a>
+                                    )}
+                                    <div className="flex-1" />
+                                    <button
+                                        className="rounded-full border border-gray-600 px-4 py-2 bg-white-200 text-black hover:bg-blue-700 hover:text-white hover:border-blue-600 transition duration-300 mt-1 mb-2"
+                                        style={{ alignSelf: "stretch" }}
+                                    >
+                                        Ver más
+                                    </button>
+                                </CardContent>
+                            </Card>
+                        ))
+                    ) : (
+                        <div className="col-span-full w-full flex flex-col items-center justify-center min-h-[60vh] p-8 bg-white bg-opacity-90 rounded-2xl shadow-xl">
+                            <Image
+                                src="/Nodata.png"
+                                alt="Sin datos"
+                                width={500}
+                                height={500}
+                                className="mb-1"
+                            />
+                            <h2 className="text-2xl font-bold text-primary-600 mb-4 text-center">
+                                ¡Aún no hay capacitaciones!
+                            </h2>
+                            <p className="text-lg font-semibold text-gray-700 mb-4 text-center">
+                                Aquí podrás encontrar todas las capacitaciones disponibles.
+                            </p>
+                            {orgRole === "admin" ? "" :
+                                <Link
+                                    href="/capacitaciones/agregar"
+                                    className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg"
+                                >
+                                    Agregar Capacitación
+                                </Link>
+                            }
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-
     );
 }
-

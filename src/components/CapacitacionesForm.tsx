@@ -7,6 +7,8 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 import CalendarFormBtn from "./CalendarFormBtn";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 
 type CapacitacionesData = {
@@ -32,6 +34,10 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
   const [time, setTime] = useState(initialData?.time || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(initialData?.file || null);
   const [message, setMessage] = useState("");
+  const router = useRouter();
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerMessage, setDrawerMessage] = useState("");
+  const [drawerError, setDrawerError] = useState(false);
 
   const { userId } = useAuth();
 
@@ -52,7 +58,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
         setName(capc.name);
         setDescription(capc.description);
         setLink(capc.link);
-        setDate(capc.date); 
+        setDate(capc.date);
         setTime(capc.time);
         // The image file cannot be prefilled; users must upload a new one if needed
       };
@@ -119,19 +125,70 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
     });
 
     const data = await response.json();
-    setMessage(data.message || data.error);
+    if (data.message || !data.error) {
+      setDrawerMessage("¡Capacitación publicada exitosamente! Redirigiendo...");
+      setDrawerError(false);
+      setDrawerVisible(true);
+      setTimeout(() => {
+        setDrawerVisible(false);
+        router.push("/capacitaciones");
+      }, 2000);
+    } else {
+      setDrawerMessage(data.error || "¡Lo sentimos! Ocurrió un error al publicar.");
+      setDrawerError(true);
+      setDrawerVisible(true);
+      setTimeout(() => {
+        setDrawerVisible(false);
+      }, 3000);
+    }
   };
 
   return (
-    <div className="flex min-h-screen flex-col py-5 text-blue-500">
-      <div className="m-5 p-8">
-        <h1 className="mb-4 text-left text-3xl font-bold">
-          {mode === "create" ? "Crear Capacitación" : "Editar Capacitación"}
-        </h1>
+    <div className="min-h-screen flex items-start justify-center bg-gradient-to-r from-primary-50 to-purple-50 pt-8">
+      <div className="w-full max-w-lg bg-white bg-opacity-90 rounded-2xl shadow-xl p-8 mt-4">
         {message && (
-          <div className="mb-4 rounded-lg bg-red-100 p-4 text-red-700 shadow-md">
-            {message}
-            </div>)}
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-100 p-4 text-red-700 shadow-md animate-fade-in">
+            <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{message}</span>
+          </div>
+        )}
+        {drawerVisible && (
+          <div
+            className={`mb-4 flex items-center gap-2 rounded-lg p-4 shadow-md animate-fade-in ${drawerError
+              ? "bg-red-100 text-red-700"
+              : "bg-green-100 text-green-700"
+              }`}
+          >
+            {drawerError ? (
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+            <span className="font-semibold">{drawerMessage}</span>
+          </div>
+        )}
+        <div className="flex items-center mb-2">
+          <button
+            type="button"
+            aria-label="Volver a capacitaciones"
+            onClick={() => router.push("/capacitaciones")}
+            className="mr-2 p-2 rounded-full hover:bg-primary-100 transition-colors"
+          >
+            <ArrowLeft className="h-6 w-6 text-primary-600" />
+          </button>
+          <h1 className="text-3xl font-extrabold text-primary-600">
+            {mode === "create" ? "Crear Capacitación" : "Editar Capacitación"}
+          </h1>
+        </div>
+        <p className="mb-6 text-gray-500">
+          Agrega una capacitación para que los usuarios puedan visualizarlas.
+        </p>
         <form
           className="flex max-w-md flex-col space-y-3"
           onSubmit={handleSubmit}
@@ -143,7 +200,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Nombre</Label>
-            <Input id="name" type="text" onChange={(e) => setName(e.target.value)} placeholder="Nombre de la capacitación"/>
+            <Input id="name" type="text" onChange={(e) => setName(e.target.value)} placeholder="Nombre de la capacitación" />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -152,20 +209,19 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
               id="description"
               placeholder="Agrega una descripción"
               value={description}
-              style={{color: "black"}}
+              style={{ color: "black" }}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label>Link</Label>
-            <Input id="link" type="text" onChange={(e) => setLink(e.target.value)} placeholder="Opcional" ></Input>
+            <Label>Enlace</Label>
+            <Input id="link" type="text" onChange={(e) => setLink(e.target.value)} placeholder="Opcional" />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label>Fecha</Label>
-            {/* <Input id="date" type="date" onChange={handleDateChange} /> */}
-            <CalendarFormBtn onSelect={handleDateChange} selected={date}/>
+            <CalendarFormBtn onSelect={handleDateChange} selected={date} />
           </div>
 
           <div className="grid w-full max-w-sm items-center gap-1.5 pb-5">
@@ -173,8 +229,11 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
             <Input id="time" type="time" onChange={(e) => setTime(e.target.value)} />
           </div>
 
-
-          <Button variant="upload" type="submit">
+          <Button
+            variant="default"
+            type="submit"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all"
+          >
             {mode === "create" ? "Publicar" : "Guardar Cambios"}
           </Button>
         </form>
