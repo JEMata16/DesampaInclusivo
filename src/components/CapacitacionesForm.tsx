@@ -110,7 +110,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
     const formData = new FormData();
     if (selectedFile) formData.append("file", selectedFile);
     formData.append("name", name);
-    formData.append("descripcion", description);
+    formData.append("description", description);
     formData.append("link", (link ?? "").toString());
     formData.append("date", date.toISOString());
     formData.append("time", (time ?? "").toString());
@@ -187,7 +187,7 @@ export default function CapacitacionesForm({ mode, capcId, initialData }: PostFo
           </h1>
         </div>
         <p className="mb-6 text-gray-500">
-          Agrega una capacitación para que los usuarios puedan visualizarlas.
+          Agrega una capacitación para que los usuarios puedan visualizarla.
         </p>
         <form
           className="flex max-w-md flex-col space-y-3"

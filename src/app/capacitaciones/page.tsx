@@ -47,57 +47,67 @@ export default async function Capacitaciones() {
                 }
                 <div className="grid w-full gap-6 grid-cols-1 md:grid-cols-2">
                     {data.capcs && data.capcs.length > 0 ? (
-                        data.capcs.map((capc) => (
-                            <Card
-                                key={capc.id}
-                                className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
-                            >
-                                <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
-                                    <Image
-                                        src={capc.image.signedUrl}
-                                        alt={capc.name}
-                                        className="object-cover w-full h-full"
-                                        width={500}
-                                        height={300}
-                                        priority
-                                    />
-                                </div>
-                                <CardContent className="flex flex-col gap-1 px-4 pb-4 flex-1">
-                                    <span className="font-semibold text-primary-600 text-lg mt-3 mb-1">{capc.name}</span>
-                                    <div className="flex flex-col gap-0 mb-0">
-                                        <span className="flex items-center text-black text-base">
-                                            <CalendarIcon size={16} className="mr-1" />
-                                            {format((capc.date).slice(0, 10), "PPP", { locale: es })}
-                                        </span>
-                                        <span className="flex items-center text-black text-base">
-                                            <ClockIcon size={16} className="mr-1" />
-                                            {capc.time}
-                                        </span>
+                        [...data.capcs]
+                            .sort((a, b) => { // Ordenado por fecha y hora, eventos pasados al final
+                                const now = new Date();
+                                const dateTimeA = new Date(`${a.date}T${a.time}`);
+                                const dateTimeB = new Date(`${b.date}T${b.time}`);
+                                
+                                const isPastA = dateTimeA < now;
+                                const isPastB = dateTimeB < now;
+
+                                if (isPastA && !isPastB) return 1;
+                                if (!isPastA && isPastB) return -1;
+
+                                return dateTimeA.getTime() - dateTimeB.getTime();
+                            })
+                            .map((capc) => (
+                                <Card
+                                    key={capc.id}
+                                    className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full min-h-[370px]"
+                                >
+                                    <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
+                                        <Image
+                                            src={capc.image.signedUrl}
+                                            alt={capc.name}
+                                            className="object-cover w-full h-full"
+                                            width={500}
+                                            height={300}
+                                            priority
+                                        />
                                     </div>
-                                    <div className="text-gray-700 text-sm line-clamp-4 mb-0">{capc.description}</div>
-                                    {capc.link && (
-                                        <a
-                                            href={capc.link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center text-primary-600 hover:underline mb-0"
-                                        >
-                                            <span className="flex items-center text-base">
-                                            <LinkIcon size={16} className="mr-1"/>
-                                            Haz clic aquí para redirigirte a la capacitación
+                                    <CardContent className="flex flex-col gap-1 px-4 pb-4 flex-1">
+                                        <span className="font-semibold text-primary-700 text-lg mt-3 mb-1">{capc.name}</span>
+                                        <div className="flex flex-col gap-0 mb-0">
+                                            <span className="flex items-center text-black text-base">
+                                                <CalendarIcon size={16} className="mr-1" />
+                                                {format((capc.date).slice(0, 10), "PPP", { locale: es })}
                                             </span>
-                                        </a>
-                                    )}
-                                    <div className="flex-1" />
-                                    <button
-                                        className="rounded-full border border-gray-600 px-4 py-2 bg-white-200 text-black hover:bg-blue-700 hover:text-white hover:border-blue-600 transition duration-300 mt-1 mb-2"
-                                        style={{ alignSelf: "stretch" }}
-                                    >
-                                        Ver más
-                                    </button>
-                                </CardContent>
-                            </Card>
-                        ))
+                                            <span className="flex items-center text-black text-base">
+                                                <ClockIcon size={16} className="mr-1" />
+                                                {capc.time}
+                                            </span>
+                                        </div>
+                                        {capc.link && (
+                                            <a
+                                                href={capc.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="font-semibold flex items-center text-primary-600 hover:underline mb-2"
+                                            >
+                                                <span className="flex items-center text-base">
+                                                    <LinkIcon size={16} className="mr-1" />
+                                                    Haz clic aquí para redirigirte a la capacitación
+                                                </span>
+                                            </a>
+                                        )}
+                                        <div className="flex-1" />
+                                        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 text-gray-800 text-base font-medium shadow-inner border border-blue-100 mt-2 text-center">
+                                            {capc.description ? capc.description : "Sin detalles adicionales"}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))
                     ) : (
                         <div className="col-span-full w-full flex flex-col items-center justify-center min-h-[60vh] p-8 bg-white bg-opacity-90 rounded-2xl shadow-xl">
                             <Image
