@@ -6,6 +6,7 @@ import AuthOptionsButtons from "../components/AuthOptions";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
 import { useUser } from "@clerk/nextjs";
+import Resources from "~/components/Resources";
 
 
 
@@ -171,6 +172,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <Resources />
       <Footer />
 
     </>
