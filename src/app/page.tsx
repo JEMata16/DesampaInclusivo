@@ -32,14 +32,14 @@ export default function HomePage() {
           height: '100vh',
           width: '100vw',
         }}>
-          <Image src="/Dance.png" layout="fill" objectFit="cover" alt="Imagen de bailarines" />
+          <Image src="/ADI.png" layout="fill" objectFit="cover" alt="Imagen ADI" />
           {/* Your content here */}
         </div>
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         <div className="relative z-10 text-center max-w-6xl mx-auto px-4">
           <div className="mb-6">
             <span className="inline-block bg-primary-600 bg-opacity-90 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
-              🌟 Únete o visualiza nuestras danzas locales
+              🌟 Únete o visualiza nuestros recursos disponibles
             </span>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -79,64 +79,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Community Testimonials Section */}
-      <section className="bg-gradient-to-r from-primary-50 to-purple-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lo que dicen nuestros vecinos</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">Experiencias en lugares accesibles</p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {/* Testimonio 1 */}
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="flex text-yellow-400 mb-4">★★★★★</div>
-              <p className="text-gray-700 mb-4">"Gracias a esta plataforma, ahora puedo acceder a servicios públicos sin depender de otras personas. La accesibilidad digital ha hecho una gran diferencia en mi vida."</p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-bold">M</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">María Rodríguez</div>
-                  <div className="text-gray-500 text-sm">Usuaria con discapacidad visual</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonio 2 */}
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="flex text-yellow-400 mb-4">★★★★★</div>
-              <p className="text-gray-700 mb-4">"Como madre de un joven con discapacidad, me siento acompañada. Aquí encontré información clara y accesible sobre programas del gobierno y derechos."</p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-green-600 font-bold">E</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">Elena Castro</div>
-                  <div className="text-gray-500 text-sm">Madre cuidadora</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonio 3 */}
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="flex text-yellow-400 mb-4">★★★★★</div>
-              <p className="text-gray-700 mb-4">"Como costarricense con movilidad reducida, por fin encontré un sitio donde puedo expresar mis ideas, participar y sentirme parte de una comunidad."</p>
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                  <span className="text-blue-600 font-bold">C</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900">Carlos Jiménez</div>
-                  <div className="text-gray-500 text-sm">Activista por la inclusión</div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Resources Section */}
+      <section id="resources" className="bg-gray-100 py-16">
+        <div className="container mx-auto px-4">
+          <Resources />
 
 
           {/* Social Links */}
-          <div className="text-center">
+          <div className="text-center" id="contacto">
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Únete a nuestra creciente comunidad</h3>
             <div className="flex justify-center space-x-6">
               {/* Facebook */}
@@ -168,11 +119,10 @@ export default function HomePage() {
                 </svg>
               </a>
             </div>
-            <p className="text-gray-600 mt-4">Síguenos para inspiración diaria, consejos y novedades</p>
+            <p className="text-gray-600 mt-4">Síguenos para conectar con la comunidad, obtener consejos y novedades</p>
           </div>
         </div>
       </section>
-      <Resources />
       <Footer />
 
     </>

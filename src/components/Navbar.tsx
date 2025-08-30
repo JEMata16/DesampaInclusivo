@@ -33,8 +33,8 @@ export default function Navbar() {
     { href: '/publicaciones', text: 'Experiencias' },
     { href: '/videos', text: 'Vídeos' },
     { href: '/capacitaciones', text: 'Capacitaciones' },
-    { href: '/recursos', text: 'Recursos' },
-    { href: '/contactar', text: 'Contactar' },
+    { href: '/#resources', text: 'Recursos' },
+    { href: '/#contacto', text: 'Contacto' }
   ];
 
   return (
