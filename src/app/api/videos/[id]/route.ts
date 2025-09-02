@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "~/server/db";
 import { videos, files } from "~/server/db/schema";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 
 const s3Client = new S3Client({
@@ -16,30 +17,39 @@ const s3Client = new S3Client({
 });
 
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const id = parseInt(params.id);
 
     const video = await db.query.videos.findFirst({
       where: eq(videos.id, id),
-      with: {
-        file: true,
-      },
+      with: { file: true },
     });
 
     if (!video) {
       return NextResponse.json({ error: "Video no encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(video);
+    let url = "";
+    if (video.file && video.file.fileName) {
+      const command = new GetObjectCommand({
+        Bucket: "desampainclusivo",
+        Key: video.file.fileName,
+      });
+      url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    }
+
+    return NextResponse.json({
+      key: video.id.toString(),
+      title: video.title,
+      url,
+    });
   } catch (error) {
     console.error("Error fetching video:", error);
     return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }
 }
+
 
 
 export async function DELETE(

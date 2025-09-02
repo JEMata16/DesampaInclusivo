@@ -65,7 +65,8 @@ export default function VideoForm({ mode, videoId, initialData }: PostFormProps)
     e.preventDefault();
 
     if (!title.trim()) {
-      setMessage("Por favor ingrese una descripción.");
+      setMessage("¡Lo sentimos! Debes indicar un título de vídeo.");
+      setTimeout(() => setMessage(""), 3000);
       return;
     }
 
@@ -90,6 +91,7 @@ export default function VideoForm({ mode, videoId, initialData }: PostFormProps)
       setTimeout(() => {
         setDrawerVisible(false);
         router.push("/videos");
+        router.refresh && router.refresh();
       }, 2000);
     } else {
       setDrawerMessage(data.error || "¡Lo sentimos! Ocurrió un error al publicar.");
@@ -102,7 +104,7 @@ export default function VideoForm({ mode, videoId, initialData }: PostFormProps)
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start pt-12 bg-gradient-to-r from-primary-50 to-purple-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-primary-50 to-purple-50">
       <div className="w-full max-w-lg bg-white bg-opacity-90 rounded-2xl shadow-xl p-8">
         {message && (
           <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-100 p-4 text-red-700 shadow-md animate-fade-in">
@@ -141,8 +143,8 @@ export default function VideoForm({ mode, videoId, initialData }: PostFormProps)
           >
             <ArrowLeft className="h-6 w-6 text-blue-600" />
           </button>
-          <h1 className="mb-4 text-left text-3xl font-bold">
-            {mode === "create" ? "Agregar Video" : "Editar Video"}
+          <h1 className="mb-4 text-left text-3xl font-extrabold text-primary-600">
+            {mode === "create" ? "Publicar Vídeo" : "Editar Vídeo"}
           </h1>
         </div>
         <p className="mb-6 text-gray-500">
