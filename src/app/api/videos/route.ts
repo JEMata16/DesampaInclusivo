@@ -2,6 +2,8 @@ import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/clien
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import * as https from "https";
 import { NextResponse } from "next/server";
+import { db } from "~/server/db";
+import { videos, files } from "~/server/db/schema";
 
 
 const s3Client = new S3Client({
@@ -16,44 +18,34 @@ const s3Client = new S3Client({
 });
 
 
-export async function GET(req: any) {
+export async function GET() {
     try {
-      // Listar objetos
-      const listCommand = new ListObjectsV2Command({
-        Bucket: process.env.S3_BUCKET_NAME!,
-        Prefix: "videos/", // Ensure it targets the "videos" folder
-      });
-  
-      const listResponse = await s3Client.send(listCommand);
-  
-      // Asegurar de que la lista no este vacia
-      if (!listResponse.Contents) {
-        return NextResponse.json({ message: "No videos found" }, { status: 404 });
-      }
-  
-      // Generate signed URLs for each object
-      const signedUrls = await Promise.all(
-        listResponse.Contents.map(async (item) => {
-          if (item.Key) {
-            const signedUrl = await getSignedUrl(
-              s3Client as any,
-              new GetObjectCommand({
-                Bucket: process.env.S3_BUCKET_NAME!,
-                Key: item.Key,
-              }) as any,
-              { expiresIn: 3600 }
-            );
-            return { key: item.Key, url: signedUrl };
-          }
-        })
-      );
-  
-      return NextResponse.json(signedUrls, { status: 200 });
-    } catch (error) {
-      console.error("Error generating signed URLs:", error);
-      return NextResponse.json(
-        { message: "Failed to generate signed URLs", error },
-        { status: 500 }
-      );
-    }
+    const allVideos = await db.query.videos.findMany({
+      with: { file: true },
+      orderBy: (videos, { desc }) => [desc(videos.createdAt)],
+    });
+
+    const result = await Promise.all(
+      allVideos.map(async (video) => {
+        let url = "";
+        if (video.file && video.file.fileName) {
+          const command = new GetObjectCommand({
+            Bucket: "desampainclusivo",
+            Key: video.file.fileName,
+          });
+          url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+        }
+        return {
+          key: video.id.toString(),
+          title: video.title,
+          url,
+        };
+      })
+    );
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    return NextResponse.json({ error: "Error interno" }, { status: 500 });
   }
+}

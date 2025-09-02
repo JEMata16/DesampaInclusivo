@@ -34,13 +34,11 @@ export async function POST(request: Request) {
   const { has } = auth();
   const userId = request.headers.get("userId");
 
-  if (!has({ role: "org:muni" })) {
-    {
-      return NextResponse.json(
-        { error: "No tienes permiso para subir videos" },
-        { status: 403 },
-      );
-    }
+  if (!(has({ role: "org:muni" }) || !has({ role: "org:admin" }))) {
+    return NextResponse.json(
+      { error: "No tienes permiso para subir videos" },
+      { status: 403 },
+    );
   }
 
   try {
@@ -58,59 +56,61 @@ export async function POST(request: Request) {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    if (buffer.length > 16 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "El archivo supera el límite de 16MB permitido." },
+        { status: 400 }
+      );
+    }
+
     const stream = Readable.from(buffer);
 
     const command = new PutObjectCommand({
       Bucket: "desampainclusivo",
       Key: title,
       Body: stream,
-      ContentType: file.type,
+      ContentType: file.type || "video/mp4",
       ContentLength: buffer.length,
+      ACL: "public-read",
     });
 
     await s3Client.send(command);
 
-    try {
-      const insertedVideo = await db
-        .insert(videos)
-        .values({
-          title: title,
-          mediaId: parseInt(file.name,10),
-        })
-        .returning({ id: videos.id });
+    const insertedFile = await db
+      .insert(files)
+      .values({
+        bucket: "desampainclusivo",
+        fileName: title,
+        originalName: file.name,
+        size: file.size,
+        authorId: userId,
+      })
+      .returning({ id: files.id });
 
-      if (!insertedVideo || !insertedVideo[0]) {
-        throw new Error("Fallo al registrar el video");
-      }
-
-      const videoId = insertedVideo[0].id;
-      const insertedFile = await db
-        .insert(files)
-        .values({
-          bucket: "desampainclusivo",
-          fileName: title,
-          originalName: file.name,
-          size: file.size,
-          authorId: userId,
-        })
-        .returning({ id: files.id });
-
-      if (!insertedFile || !insertedFile[0]) {
-        throw new Error("File insertion failed, no ID returned.");
-      }
-
-      const fileId = insertedFile[0].id;
-    } catch (error) {
-      console.error("Eror en la base de datos:", error);
-      return NextResponse.json(
-        { error: "Fallo al registrar el video" },
-        { status: 500 },
-      );
+    if (!insertedFile || !insertedFile[0]) {
+      throw new Error("File insertion failed, no ID returned.");
     }
+
+    const fileId = insertedFile[0].id;
+
+    const insertedVideo = await db
+      .insert(videos)
+      .values({
+        title: title,
+        mediaId: fileId,
+      })
+      .returning({ id: videos.id });
+
+    if (!insertedVideo || !insertedVideo[0]) {
+      throw new Error("Fallo al registrar el vídeo");
+    }
+
+    return NextResponse.json({ message: "Vídeo subido exitosamente" });
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error("Error en la base de datos:", error);
     return NextResponse.json(
-      { error: "Fallo al subir el video" },
+      { error: "Fallo al registrar el vídeo" },
       { status: 500 },
     );
   }
