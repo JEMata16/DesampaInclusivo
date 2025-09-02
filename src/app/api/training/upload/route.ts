@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import * as https from "https";
-import { NodeHttpHandler } from "@aws-sdk/node-http-handler";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { db } from "~/server/db";
 import { capacitaciones, files } from "~/server/db/schema";
 
