@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import VerticalIcon from "./VerticalIcon";
-import { MapPinIcon } from "lucide-react";
+import { MapPinIcon, Pencil, Trash2 } from "lucide-react";
 import Loading from "./Loading";
 import Image from "next/image";
 
@@ -76,8 +75,32 @@ export default function PostCards({ userId }: { userId: string | null | undefine
             posts.posts.map((post, index) => (
               <Card
                 key={index}
-                className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
+                className="relative rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
               >
+                {userId === post.authorId && (
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                    <button
+                      className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
+                      title="Editar publicación"
+                      onClick={() => window.location.href = `/publicaciones/editar/${post.id}`}
+                    >
+                      <Pencil className="h-5 w-5 text-blue-600" />
+                    </button>
+                    <button
+                      className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
+                      title="Eliminar publicación"
+                      onClick={async () => {
+                        await fetch(`api/posts/${post.id}`, {
+                          method: "DELETE",
+                          headers: { userId: userId ?? "" }
+                        });
+                        window.location.reload();
+                      }}
+                    >
+                      <Trash2 className="h-5 w-5 text-red-600" />
+                    </button>
+                  </div>
+                )}
                 {/* Image */}
                 <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
                   <Image
@@ -101,9 +124,6 @@ export default function PostCards({ userId }: { userId: string | null | undefine
                       <MapPinIcon size={16} className="mr-1" />
                       {post.provincia}
                     </span>
-                    {userId === post.authorId && (
-                      <VerticalIcon postId={post.id} userId={userId} />
-                    )}
                   </div>
                 </div>
                 {/* Content */}

@@ -10,7 +10,7 @@ export default function publicaciones() {
   const { value } = useMyContext();
   const { userId } = useAuth();
   return (
-    <main className="flex flex-col  bg-gray-200">
+    <main className="flex flex-col bg-gradient-to-r from-primary-50 to-purple-50">
       <div className="ml-3 py-3">
         <Button variant="upload">
           <Link href="/publicaciones/agregar">+ Publicar</Link>
