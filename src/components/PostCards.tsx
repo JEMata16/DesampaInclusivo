@@ -24,6 +24,7 @@ type Posts = {
       signedUrl: string;
     },
   ];
+  createdAt: string;
 };
 export default function PostCards({ userId }: { userId: string | null | undefined }) {
   const [posts, setPosts] = useState<Data | null>(null);
@@ -72,7 +73,10 @@ export default function PostCards({ userId }: { userId: string | null | undefine
       <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 py-6">
         <div className="mx-auto grid w-full gap-6 grid-cols-1 md:grid-cols-2">
           {posts && posts.posts.length > 0 ? (
-            posts.posts.map((post, index) => (
+            posts.posts
+            .slice()
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .map((post, index) => (
               <Card
                 key={index}
                 className="relative rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full"
