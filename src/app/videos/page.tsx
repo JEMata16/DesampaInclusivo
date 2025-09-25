@@ -1,10 +1,12 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Protect } from "@clerk/nextjs";
 
 type Video = {
     key: string;
@@ -32,13 +34,15 @@ export default function VideosPage() {
                         <Link href="/videos/agregar">+ Agregar Vídeo</Link>
                     </Button>
                 )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {videos.length > 0 ? (
                         videos.map((video) => (
                             <div
                                 key={video.key}
-                                className="bg-white rounded-xl shadow-md p-4 flex flex-col items-center"
+                                className="relative bg-white rounded-xl shadow-md p-4 flex flex-col items-center"
                             >
+
                                 <video
                                     controls
                                     className="w-full rounded-lg mb-3 bg-black"
@@ -47,7 +51,23 @@ export default function VideosPage() {
                                     <source src={video.url} type="video/mp4" />
                                     ¡Lo sentimos! Tu navegador no soporta el video.
                                 </video>
-                                <div className="w-full text-left font-bold text-blue-700 text-md break-all mb-2">{video.title}</div>
+
+                                <div className="w-full flex items-center justify-between mb-2">
+                                    <div className="font-bold text-blue-700 text-md break-all">{video.title}</div>
+                                        <button
+                                            className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
+                                            type="button"
+                                            title="Eliminar vídeo"
+                                            onClick={async () => {
+                                                if (!confirm("¿Estás seguro de que deseas eliminar este vídeo?")) return;
+                                                await fetch(`/api/videos/${video.key}`, { method: "DELETE" });
+                                                window.location.reload();
+                                            }}
+                                        >
+                                            <Trash2 className="h-5 w-5 text-red-600" />
+                                        </button>
+                                </div>
+
                             </div>
                         ))
                     ) : (

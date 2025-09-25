@@ -1,11 +1,12 @@
-
 import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CalendarIcon, ClockIcon, MapPinIcon, Link as LinkIcon } from "lucide-react";
+import { CalendarIcon, ClockIcon, Link as LinkIcon, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import Image from "next/image";
+import { or } from "drizzle-orm";
+import CapDeleteBtn from "~/components/CapDeleteBtn";
 
 export const revalidate = 60
 
@@ -52,7 +53,7 @@ export default async function Capacitaciones() {
                                 const now = new Date();
                                 const dateTimeA = new Date(`${a.date}T${a.time}`);
                                 const dateTimeB = new Date(`${b.date}T${b.time}`);
-                                
+
                                 const isPastA = dateTimeA < now;
                                 const isPastB = dateTimeB < now;
 
@@ -64,8 +65,11 @@ export default async function Capacitaciones() {
                             .map((capc) => (
                                 <Card
                                     key={capc.id}
-                                    className="rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full min-h-[370px]"
+                                    className="relative rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full min-h-[370px]"
                                 >
+                                    {orgRole === "admin" ? "" :
+                                        <CapDeleteBtn id={capc.id} />
+                                    }
                                     <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
                                         <Image
                                             src={capc.image.signedUrl}
