@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth, UserButton } from '@clerk/nextjs';
+import { link } from 'fs';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,7 +12,7 @@ export default function Navbar() {
   const { isLoaded, isSignedIn, userId, sessionId, getToken } = useAuth()
   const pathname = usePathname();
 
-  
+
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -25,7 +26,7 @@ export default function Navbar() {
     localStorage.removeItem('currentUser');
     setCurrentUser(null);
     setUserDropdownOpen(false);
-    // Here you would also handle Google sign-out if needed
+
   };
 
   const navLinks = [
@@ -37,6 +38,8 @@ export default function Navbar() {
     { href: '/#contacto', text: 'Contacto' }
   ];
 
+  const visibleNavLinks = isSignedIn ? navLinks : [];
+
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,8 +50,8 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:space-x-8">
-            {navLinks.map((link) => (
+            <div className="hidden md:flex md:space-x-8">
+            {visibleNavLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href}

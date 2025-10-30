@@ -42,14 +42,14 @@ export async function POST(request: Request) {
 
     if (!file) {
       return NextResponse.json(
-        { error: "No se recibio el archivo" },
+        { error: "No se recibió el archivo" },
         { status: 400 },
       );
     }
 
     if (!userId) {
       return NextResponse.json(
-        { error: "No se detecto el usuario" },
+        { error: "No se detectó el usuario" },
         { status: 400 },
       );
     }

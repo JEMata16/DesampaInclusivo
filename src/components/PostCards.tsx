@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import RatingStars from "./RatingStars";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { MapPinIcon, Pencil, Trash2 } from "lucide-react";
 import Loading from "./Loading";
 import Image from "next/image";
 import { Protect } from "@clerk/nextjs";
+import PostDeleteBtn from "./PostDeleteBtn";
 
 
 type Data = {
@@ -64,11 +65,16 @@ export default function PostCards({ userId, role }: { userId: string | null | un
     fetchData();
   }, [userId]);
 
-  if (isLoading)
-    return (
+  if (isLoading) return (<Loading />);
 
-      <Loading />
-    );
+  const handlePostDelete = (postId: string) => {
+    setPosts((prev) => ({
+      ...prev,
+      posts: prev?.posts.filter((post) => post.id !== postId) || [],
+      image: prev?.image || null,
+    }));
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 py-6">
@@ -94,37 +100,13 @@ export default function PostCards({ userId, role }: { userId: string | null | un
                           <Pencil className="h-5 w-5 text-blue-600" />
                         </button>
                       )}
-                      <button
-                        className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
-                        title="Eliminar publicación"
-                        onClick={async () => {
-                          await fetch(`api/posts/${post.id}`, {
-                            method: "DELETE",
-                            headers: { userId: userId ?? "" }
-                          });
-                          window.location.reload();
-                        }}
-                      >
-                        <Trash2 className="h-5 w-5 text-red-600" />
-                      </button>
+                      <PostDeleteBtn postId={post.id} userId={userId} onDelete={handlePostDelete} />
                     </div>
                   )}
                   {/* Botón de eliminar para administradores */}
-                  <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin"})}>
+                  <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin" })}>
                     <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
-                      <button
-                        className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
-                        title="Eliminar publicación"
-                        onClick={async () => {
-                          await fetch(`api/posts/${post.id}`, {
-                            method: "DELETE",
-                            headers: { userId: userId ?? "" }
-                          });
-                          window.location.reload();
-                        }}
-                      >
-                        <Trash2 className="h-5 w-5 text-red-600" />
-                      </button>
+                      <PostDeleteBtn postId={post.id} userId={userId} onDelete={handlePostDelete} />
                     </div>
                   </Protect>
                   {/* Image */}

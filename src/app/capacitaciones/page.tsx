@@ -38,14 +38,14 @@ export default async function Capacitaciones() {
     return (
         <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 pt-4">
             <div className="mx-auto w-full max-w-6xl">
-                {orgRole === "admin" ? "" :
+                {(orgRole === "admin" || orgRole === "org:muni") && (
                     <Link
                         href="/capacitaciones/agregar"
                         className="rounded-md w-[220px] border bg-blue-600 text-white py-2 mb-4 flex items-center justify-center hover:bg-blue-700 transition duration-300 ml-3"
                     >
                         + Agregar Capacitación
                     </Link>
-                }
+                )}
                 <div className="grid w-full gap-6 grid-cols-1 md:grid-cols-2">
                     {data.capcs && data.capcs.length > 0 ? (
                         [...data.capcs]
@@ -67,9 +67,9 @@ export default async function Capacitaciones() {
                                     key={capc.id}
                                     className="relative rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full min-h-[370px]"
                                 >
-                                    {orgRole === "admin" ? "" :
+                                    {(orgRole === "admin" || orgRole === "org:muni") && (
                                         <CapDeleteBtn id={capc.id} />
-                                    }
+                                    )}
                                     <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
                                         <Image
                                             src={capc.image.signedUrl}
@@ -127,14 +127,14 @@ export default async function Capacitaciones() {
                             <p className="text-lg font-semibold text-gray-700 mb-4 text-center">
                                 Aquí podrás encontrar todas las capacitaciones disponibles.
                             </p>
-                            {orgRole === "admin" ? "" :
+                            {(orgRole === "admin" || orgRole === "org:muni") && (
                                 <Link
                                     href="/capacitaciones/agregar"
                                     className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg"
                                 >
                                     Agregar Capacitación
                                 </Link>
-                            }
+                            )}
                         </div>
                     )}
                 </div>

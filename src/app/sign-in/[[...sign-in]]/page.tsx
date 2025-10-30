@@ -2,6 +2,7 @@
 import { useSignIn } from '@clerk/nextjs';
 import Image from 'next/image';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const SignInOAuthButtons = () => {
     const { signIn, isLoaded } = useSignIn();
@@ -14,7 +15,7 @@ const SignInOAuthButtons = () => {
             redirectUrl: '/sso-callback',
             redirectUrlComplete: '/'
         });
-    return <button onClick={signInWithGoogle}>Login con Google</button>;
+    return <button onClick={signInWithGoogle}>Inicio de sesión con Google</button>;
 };
 
 export default function SignInPage() {
@@ -42,7 +43,7 @@ export default function SignInPage() {
             <Image src="/Logo ADI.png" alt="LOGO ADI" width={200} height={200} />
 
             <div className="mt-8 p-6 bg-white bg-opacity-10 rounded-lg shadow-lg max-w-md w-full">
-                <h1 className="text-3xl font-bold mb-4 text-center">Login</h1>
+                <h1 className="text-3xl font-bold mb-4 text-center">Iniciar sesión</h1>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
@@ -66,6 +67,12 @@ export default function SignInPage() {
 
                 <div className="mt-4">
                     <SignInOAuthButtons />
+                </div>
+                <div className="mt-4 text-center text-sm text-white/80">
+                  ¿No tienes una cuenta?{" "}
+                  <Link href="/sign-up" className="font-semibold text-white underline">
+                    Regístrate
+                  </Link>
                 </div>
             </div>
         </main>

@@ -29,12 +29,7 @@ export default function VideosPage() {
     return (
         <section className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 py-4">
             <div className="max-w-5xl mx-auto px-4">
-                {pathname !== "/videos/agregar" && (
-                    <Button variant="upload" size={"sm"} className="rounded-md w-[160px] border bg-blue-600 text-white py-2 mt-2 mb-4 flex items-center justify-center hover:bg-blue-700 transition duration-300 ml-3">
-                        <Link href="/videos/agregar">+ Agregar Vídeo</Link>
-                    </Button>
-                )}
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {videos.length > 0 ? (
                         videos.map((video) => (
@@ -54,18 +49,19 @@ export default function VideosPage() {
 
                                 <div className="w-full flex items-center justify-between mb-2">
                                     <div className="font-bold text-blue-700 text-md break-all">{video.title}</div>
+                                    <Protect condition={(has) => has({ role: "org:admin" })}>
                                         <button
                                             className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
-                                            type="button"
                                             title="Eliminar vídeo"
                                             onClick={async () => {
-                                                if (!confirm("¿Estás seguro de que deseas eliminar este vídeo?")) return;
+                                                if (!confirm("¿Eliminar?")) return;
                                                 await fetch(`/api/videos/${video.key}`, { method: "DELETE" });
                                                 window.location.reload();
                                             }}
                                         >
                                             <Trash2 className="h-5 w-5 text-red-600" />
                                         </button>
+                                    </Protect>
                                 </div>
 
                             </div>

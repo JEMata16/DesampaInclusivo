@@ -16,7 +16,7 @@ export default function videosLayout({
         }
       >
         <Button variant="upload" size={"sm"} className="m-3 p-3">
-          <Link href="/videos/agregar">+ Agregar video</Link>
+          <Link href="/videos/agregar">+ Agregar vídeo</Link>
         </Button>
       </Protect>
       
