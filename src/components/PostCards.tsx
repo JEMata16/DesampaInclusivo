@@ -28,7 +28,7 @@ type Posts = {
   ];
   createdAt: string;
 };
-export default function PostCards({ userId, role }: { userId: string | null | undefined, role: string }) {
+export default function PostCards({ userId }: { userId: string | null | undefined}) {
   const [posts, setPosts] = useState<Data | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -104,11 +104,11 @@ export default function PostCards({ userId, role }: { userId: string | null | un
                     </div>
                   )}
                   {/* Botón de eliminar para administradores */}
-                  <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin" })}>
-                    <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                  {userId !== post.authorId && (
+                    <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin" })}>
                       <PostDeleteBtn postId={post.id} userId={userId} onDelete={handlePostDelete} />
-                    </div>
-                  </Protect>
+                    </Protect>
+                  )}
                   {/* Image */}
                   <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
                     <Image

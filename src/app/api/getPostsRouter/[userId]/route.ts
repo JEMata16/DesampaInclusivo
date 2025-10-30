@@ -5,6 +5,8 @@ import { GetObjectCommand, GetObjectCommandInput, S3Client } from "@aws-sdk/clie
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { clerkClient } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
+export const dynamic = "force-dynamic";
 
 
 const s3Client = new S3Client({
@@ -45,6 +47,7 @@ export async function GET(
   req: Request,
   { params }: { params: { userId: string } },
 ) {
+  
 
   const {userId} = await params;
   // Fetch posts con sus archivos asociados

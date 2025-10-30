@@ -62,7 +62,7 @@ export async function DELETE(
     const { userId } = auth();
     if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
-    const clerkUser = await clerkClient.users.getUser(userId);
+    const clerkUser = await clerkClient().users.getUser(userId);
     const role = clerkUser.publicMetadata?.orgRole as string | undefined;
 
     const video = await db.query.videos.findFirst({

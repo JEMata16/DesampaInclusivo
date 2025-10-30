@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import Image from "next/image";
 import { or } from "drizzle-orm";
 import CapDeleteBtn from "~/components/CapDeleteBtn";
+import { Protect } from "@clerk/nextjs";
 
 export const revalidate = 60
 
@@ -38,14 +39,14 @@ export default async function Capacitaciones() {
     return (
         <div className="min-h-screen bg-gradient-to-r from-primary-50 to-purple-50 pt-4">
             <div className="mx-auto w-full max-w-6xl">
-                {(orgRole === "admin" || orgRole === "org:muni") && (
+                <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin" })}>
                     <Link
                         href="/capacitaciones/agregar"
                         className="rounded-md w-[220px] border bg-blue-600 text-white py-2 mb-4 flex items-center justify-center hover:bg-blue-700 transition duration-300 ml-3"
                     >
                         + Agregar Capacitación
                     </Link>
-                )}
+                </Protect>
                 <div className="grid w-full gap-6 grid-cols-1 md:grid-cols-2">
                     {data.capcs && data.capcs.length > 0 ? (
                         [...data.capcs]
@@ -67,9 +68,9 @@ export default async function Capacitaciones() {
                                     key={capc.id}
                                     className="relative rounded-2xl shadow-lg bg-white bg-opacity-95 overflow-hidden flex flex-col w-full min-h-[370px]"
                                 >
-                                    {(orgRole === "admin" || orgRole === "org:muni") && (
+                                    <Protect condition={(has) => has({ role: "org:muni" }) || has({ role: "org:admin" })}>
                                         <CapDeleteBtn id={capc.id} />
-                                    )}
+                                    </Protect>
                                     <div className="w-full aspect-[4/2] bg-gray-100 flex items-center justify-center overflow-hidden">
                                         <Image
                                             src={capc.image.signedUrl}
