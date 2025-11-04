@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 
 interface CapDeleteBtnProps {
   id: number;
+  onDelete: () => void;
 }
 
 const CapDeleteBtn: React.FC<CapDeleteBtnProps> = ({ id }) => {
